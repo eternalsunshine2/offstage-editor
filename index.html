@@ -33,6 +33,7 @@
 .dragGhost{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;background:#312d46;color:#fff;border-radius:9px;padding:10px 14px;box-shadow:0 13px 30px #2b224655;font-size:12px;white-space:nowrap;transform:translate(12px,12px)}
 .board.dropTarget{box-shadow:inset 0 0 0 5px #9274e1}
 .board .room.dropHover{outline:5px solid #a47ee9!important;outline-offset:-4px;filter:brightness(.96)}
+.floorDragHandle{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:30px;font-size:20px;color:#7961a3;touch-action:none;cursor:grab;user-select:none;flex-shrink:0}.floorDragHandle:active{cursor:grabbing}.floorBtn.floorDropTarget{outline:3px solid #8768cb;outline-offset:-2px;background:#eee8fc!important}.floorDraggingGhost{position:fixed;z-index:99999;pointer-events:none;background:#3d335c;color:white;padding:10px 14px;border-radius:8px;box-shadow:0 5px 20px #2228;font-size:12px;font-weight:800;transform:translate(12px,12px)}
 .corridorTools{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:16px 2px -6px}
 .toolBtn{padding:9px 10px;font-size:11px;font-weight:800;border:1px solid #d6d0e5;background:white;color:#706683;border-radius:8px}
 .toolBtn.active{background:#534077;color:white;border-color:#534077}
@@ -69,7 +70,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v13';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v14';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -189,7 +190,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','offstage','finalstage'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -207,7 +208,7 @@ let toastTimer;function toast(s){$('toast').textContent=s;$('toast').classList.a
 function accessible(r){return stage==='edit'||((r.interactive!==false)&& (r.access==='O'||(stage==='finalstage'&&r.access==='F')))}
 function roomLock(r){if(stage!=='edit'&&r.interactive===false)return '<div class="lockOverlay">건물 배경 · 방문 불가</div>';return accessible(r)?'':`<div class="lockOverlay">🔒 ${r.access==='X'?'직원 전용':'FINALSTAGE'}</div>`}
 function findCollision(r,rmList,id=r.id){if(r.x<0||r.y<0||r.x+r.w>COLS||r.y+r.h>ROWS)return true;if(r.x<20&&r.x+r.w>18&&r.y<6&&r.y+r.h>1)return true;return rmList.some(o=>o.id!==id&&r.x<o.x+o.w-.05&&r.x+r.w>o.x+.05&&r.y<o.y+o.h-.05&&r.y+r.h>o.y+.05)}
-function renderSide(){const g=getGrade(),b=getBuilding(),f=getFloor();$('gradeList').innerHTML=data.map(x=>`<button class="gradeBtn ${x.id===gradeId?'active':''}" data-grade="${x.id}"><span class="n">${String(x.id).padStart(2,'0')}</span><span><span class="mainLabel">${x.label}</span><span class="tiny">${x.description}</span></span></button>`).join('');$('buildingTabs').innerHTML=g.buildings.map(x=>`<button class="buildingTab ${x.id===buildingId?'active':''}" data-building="${esc(x.id)}">${esc(x.id)}동 · ${esc(x.name)}</button>`).join('');$('floorList').innerHTML=b.floors.map(x=>`<button class="floorBtn ${x.id===floorId?'active':''}" data-floor="${esc(x.id)}"><b>${esc(x.id)}</b><span>${esc(x.title)}</span></button>`).join('');$('floorCount').textContent=`${b.floors.length}개 층`;$('locationPath').textContent=`GRADE ${String(gradeId).padStart(2,'0')} / ${b.id} BUILDING / FLOOR PLANNER`;$('floorTitle').innerHTML=`<em>${esc(f.id)}</em> · ${esc(f.title)}`;$('floorSubtitle').textContent=`${g.label} 소속사 / ${b.name} · 공간을 드래그해서 원하는 위치에 배치하세요.`;$('floorNote').textContent=(gradeId===3?'중견 소속사: 업무·아티스트·제작·교육을 기능별로 통합한 7층 사옥입니다.':(FLOOR_NOTES[`${gradeId}:${buildingId}:${floorId}`]||GRADE_NOTES[gradeId]));$('stamp').textContent=f.id;document.querySelectorAll('[data-stage]').forEach(x=>x.classList.toggle('active',x.dataset.stage===stage))}
+function renderSide(){const g=getGrade(),b=getBuilding(),f=getFloor();$('gradeList').innerHTML=data.map(x=>`<button class="gradeBtn ${x.id===gradeId?'active':''}" data-grade="${x.id}"><span class="n">${String(x.id).padStart(2,'0')}</span><span><span class="mainLabel">${x.label}</span><span class="tiny">${x.description}</span></span></button>`).join('');$('buildingTabs').innerHTML=g.buildings.map(x=>`<button class="buildingTab ${x.id===buildingId?'active':''}" data-building="${esc(x.id)}">${esc(x.id)}동 · ${esc(x.name)}</button>`).join('');$('floorList').innerHTML=b.floors.map(x=>`<button class="floorBtn ${x.id===floorId?'active':''}" data-floor="${esc(x.id)}"><span class="floorDragHandle" data-floor-handle title="이 손잡이를 다른 층으로 끌면 두 층의 공간 배치가 교환됩니다">⠿</span><b>${esc(x.id)}</b><span>${esc(x.title)}</span></button>`).join('');$('floorCount').textContent=`${b.floors.length}개 층`;$('locationPath').textContent=`GRADE ${String(gradeId).padStart(2,'0')} / ${b.id} BUILDING / FLOOR PLANNER`;$('floorTitle').innerHTML=`<em>${esc(f.id)}</em> · ${esc(f.title)}`;$('floorSubtitle').textContent=`${g.label} 소속사 / ${b.name} · 공간을 드래그해서 원하는 위치에 배치하세요.`;$('floorNote').textContent=(gradeId===3?'중견 소속사: 업무·아티스트·제작·교육을 기능별로 통합한 7층 사옥입니다.':(FLOOR_NOTES[`${gradeId}:${buildingId}:${floorId}`]||GRADE_NOTES[gradeId]));$('stamp').textContent=f.id;document.querySelectorAll('[data-stage]').forEach(x=>x.classList.toggle('active',x.dataset.stage===stage))}
 function renderBoard(){const f=getFloor();renderCorridor();renderAccessMarkers();const el=$('roomLayer');el.innerHTML=f.rooms.map((r,i)=>{const [fill,edge,type]=PALETTE[r.category];const left=100*r.x/COLS,top=100*r.y/ROWS,w=100*r.w/COLS,h=100*r.h/ROWS;return `<div class="room ${selectedId===r.id?'sel':''} ${r.interactive===false?'background-only':''}" data-room="${esc(r.id)}" style="left:${left}%;top:${top}%;width:${w}%;height:${h}%;--fill:${fill};--edge:${edge}" title="${stage!=='edit'&&r.interactive===false?'배경 공간 · 방문 불가':('드래그해서 이동: '+esc(r.name))}"><div class="room-no">ROOM ${String(i+1).padStart(2,'0')} · ${r.access}</div><div class="roomname">${esc(r.name)}</div><div class="role">${esc(type)} · ${r.access==='O'?'공용':r.access==='F'?'데뷔 후':'직원'}</div>${roomLock(r)}<div class="grip" data-grip="1" title="끌어서 크기 조절">↘</div></div>`}).join('');$('roomCount').textContent=`${f.rooms.length}개 장소 · 선택한 방은 아래에서 상세 수정 가능`;$('roomChips').innerHTML=f.rooms.map(r=>`<button class="chip ${r.id===selectedId?'selected':''} ${r.access!=='O'?'locked':''}" data-select="${esc(r.id)}">${r.access!=='O'?'🔒 ':''}${esc(r.name)}</button>`).join('');$('totalRooms').textContent=f.rooms.length;$('accessRooms').textContent=f.rooms.filter(r=>r.access==='O').length;}
 function renderInspector(){const r=getRoom();if(!r){$('inspector').innerHTML='<p>공간을 선택하거나 새로 추가해 주세요.</p>';return}const movingOptions=getGrade().buildings.flatMap(b=>b.floors.map(f=>({value:b.id+'::'+f.id,label:b.id+'동 / '+f.id+' '+f.title})));$('inspector').innerHTML=`<h3>${esc(r.name)}</h3><p>드래그 이동 · 모서리 크기 변경 · 다른 방 두 번 클릭하면 내용 교환</p><div class="inspectorGrid"><label class="field"><span>공간 이름</span><input id="fieldName" maxlength="48" value="${esc(r.name)}"></label><label class="field"><span>용도 / 분류</span><select id="fieldCat">${Object.keys(PALETTE).map(k=>`<option value="${k}" ${k===r.category?'selected':''}>${PALETTE[k][2]}</option>`).join('')}</select></label><label class="field"><span>출입 권한</span><select id="fieldAccess"><option value="O" ${r.access==='O'?'selected':''}>O · OFFSTAGE부터</option><option value="F" ${r.access==='F'?'selected':''}>F · FINALSTAGE 전용</option><option value="X" ${r.access==='X'?'selected':''}>X · 직원 전용</option></select></label><label class="field"><span>방을 다른 층으로 이동</span><select class="moveSelect" id="moveTo"><option value="${buildingId}::${floorId}">현재 층 유지</option>${movingOptions.filter(o=>o.value!==buildingId+'::'+floorId).map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('')}</select></label><label class="field" style="grid-column:span 2"><span>장소의 실제 용도 / 게임 내 기능</span><textarea id="fieldPurpose" maxlength="300">${esc(r.purpose||'')}</textarea></label></div><div class="dim-title">위치 · 크기 (칸)</div><div class="coordgrid">${['x','y','w','h'].map(k=>`<label class="coord"><span>${{x:'X',y:'Y',w:'폭 W',h:'높이 H'}[k]}</span><input data-geom="${k}" type="number" min="${k==='w'||k==='h'?'1':'0'}" max="20" step="0.5" value="${r[k]}"></label>`).join('')}</div><div class="actionRow" style="margin-top:17px"><button id="delRoom" class="pillBtn danger">− 선택 공간 삭제</button></div><div class="hintbox">${r.access==='O'?'✓ 두 게임에서 접근 가능':r.access==='F'?'🔒 OFFSTAGE에서 잠금 · FINALSTAGE에서 해금':'🔒 직원 전용 (두 게임 모두 출입 불가)'}</div>`}
 function renderAll(){locateFirst();renderSide();renderBoard();renderInspector();renderLibrary();updateUndo();updateTools()}
@@ -359,7 +360,48 @@ $('catalogList').addEventListener('pointercancel',endLibraryDrag);
 
 $('gradeList').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-grade]');if(!b)return;gradeId=+b.dataset.grade;buildingId='A';floorId=getGrade().buildings[0].floors.find(f=>f.id==='3F')?.id||getGrade().buildings[0].floors[0].id;selectedId=null;renderAll();save()});
 $('buildingTabs').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-building]');if(!b)return;buildingId=b.dataset.building;floorId=getBuilding().floors.find(f=>f.id==='3F')?.id||getBuilding().floors[0].id;selectedId=null;renderAll();save()});
-$('floorList').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-floor]');if(!b)return;floorId=b.dataset.floor;selectedId=null;renderAll();save()});
+$('floorList').addEventListener('click',e=>{if(suppressFloorClick){e.preventDefault();suppressFloorClick=false;return;} if(e.target.closest('[data-floor-handle]'))return;chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-floor]');if(!b)return;floorId=b.dataset.floor;selectedId=null;renderAll();save()});
+// Whole-floor content swapping: IDs/level numbers stay fixed, rooms, corridors and title move together.
+let floorPointer=null,suppressFloorClick=false;
+function swapFloorPlans(fromId,toId){
+ if(fromId===toId)return;
+ const building=getBuilding(),a=building.floors.find(f=>f.id===fromId),b=building.floors.find(f=>f.id===toId);
+ if(!a||!b)return;
+ mutate(()=>{
+  const contentA={rooms:deep(a.rooms),title:a.title,corridor:deep(a.corridor||[])};
+  a.rooms=deep(b.rooms);a.title=b.title;a.corridor=deep(b.corridor||[]);
+  b.rooms=contentA.rooms;b.title=contentA.title;b.corridor=contentA.corridor;
+  selectedId=null;floorId=toId;
+ });
+ toast(fromId+' ↔ '+toId+' 층 전체 배치를 교환했어요. 실행 취소도 가능해요.');
+}
+const floorPane=$('floorList');
+function floorHit(x,y){const el=document.elementFromPoint(x,y)?.closest('[data-floor]');return el&&floorPane.contains(el)?el:null;}
+function floorClearDrag(){floorPane.querySelectorAll('.floorDropTarget').forEach(n=>n.classList.remove('floorDropTarget'));floorPointer?.ghost?.remove();floorPointer=null;}
+floorPane.addEventListener('pointerdown',e=>{
+ const handle=e.target.closest('[data-floor-handle]');if(!handle||e.button!==0)return;
+ const btn=handle.closest('[data-floor]');if(!btn)return;
+ e.preventDefault();floorPointer={id:e.pointerId,source:btn.dataset.floor,startX:e.clientX,startY:e.clientY,moved:false,ghost:null,handle};
+ handle.setPointerCapture(e.pointerId);
+});
+floorPane.addEventListener('pointermove',e=>{
+ const d=floorPointer;if(!d||d.id!==e.pointerId)return;
+ if(!d.moved&&Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>=7){
+  d.moved=true;d.ghost=document.createElement('div');d.ghost.className='floorDraggingGhost';d.ghost.textContent=d.source+' 층 전체 이동';document.body.appendChild(d.ghost);
+ }
+ if(!d.moved)return;
+ d.ghost.style.left=e.clientX+'px';d.ghost.style.top=e.clientY+'px';
+ floorPane.querySelectorAll('.floorDropTarget').forEach(n=>n.classList.remove('floorDropTarget'));
+ floorHit(e.clientX,e.clientY)?.classList.add('floorDropTarget');
+});
+floorPane.addEventListener('pointerup',e=>{
+ const d=floorPointer;if(!d||d.id!==e.pointerId)return;
+ const dest=d.moved?floorHit(e.clientX,e.clientY)?.dataset.floor:null;
+ if(d.moved){suppressFloorClick=true;setTimeout(()=>suppressFloorClick=false,250);}
+ floorClearDrag();
+ if(dest&&dest!==d.source)swapFloorPlans(d.source,dest);
+});
+floorPane.addEventListener('pointercancel',()=>floorClearDrag());
 document.querySelector('.stageRow').addEventListener('click',e=>{swapTap=null;const b=e.target.closest('[data-stage]');if(!b)return;stage=b.dataset.stage;mapTool='select';chosenTemplate=null;renderSide();renderBoard();renderLibrary();updateTools();save()});
 $('roomChips').addEventListener('click',e=>{const b=e.target.closest('[data-select]');if(b)selectRoom(b.dataset.select)});
 // Pointer-driven drag & resize. Works with mouse, stylus and touch.
