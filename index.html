@@ -44,7 +44,7 @@
 @media(max-width:850px){.left{max-height:none;overflow:visible}.left .floors{max-height:none}.left .left-sections{display:grid;grid-template-columns:1fr;gap:12px}.catalogList{max-height:195px;min-height:100px}.catalogItem small{max-width:calc(100vw - 130px)}.shell{display:flex;flex-direction:column}}
 </style></head><body>
 <div class="app">
-  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
+  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
   <div class="shell">
     <aside class="left"><div class="left-sections">
       <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
@@ -69,7 +69,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v11';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v12';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -96,24 +96,24 @@ function defData(){return [
  spec('1F','공용 · 상담','로비|social|O|출입 관리 및 방문객 안내;카페|social|O|음료·간식과 교류;연습생 상담실|support|O|진로·계약·이적 상담'),
  spec('B1','체력 · 회복','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 스트레칭·회복 관리;락커룸|support|O|운동 전후 탈의;샤워실|support|O|운동 후 샤워')]}]},
  {id:4,label:'대형',description:'지상 16층 + 지하 1층 + 옥상 · 상층 트레이닝',buildings:[{id:'A',name:'대형 본사',floors:[
- spec('RF','루프탑 라운지','루프탑 라운지|artist|F|실내외 휴식과 소규모 사내 교류 행사'),
- spec('16F','최고경영층','대표실|management|X|최고경영 의사결정;회의실|management|X|전사 경영회의와 승인;프라이빗 미팅룸|management|X|주요 외부 파트너와 비공개 접견·상담'),
- spec('15F','퍼포먼스 트레이닝','퍼포먼스 스튜디오|training|O|넓은 가변 연습 공간에서 데뷔조 합동 퍼포먼스 연습;장비 보관실|management|X|카메라·스피커·무대 표시물 보관'),
- spec('14F','안무 트레이닝','대형 안무실|training|O|정규 댄스 클래스 및 팀별 안무 연습;개인 안무실|training|O|예약제 1~3인 집중 연습'),
- spec('13F','보컬 트레이닝','개인 보컬실|training|O|여러 독립 부스를 시간제 예약하여 개인 가창 연습;보컬 레슨실|training|O|트레이너 1:1 가창·발성 지도'),
- spec('12F','창작 · 강의','강의실|training|O|음악 이론·작사·외국어·무대 표현 및 공통 교육;프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합'),
- spec('11F','연습생 복지 · 피트니스','연습생 라운지|social|O|연습 사이 식사·휴식·교류;연습생 상담실|support|O|정기 면담과 진로 상담;락커룸|support|O|개인 물품 보관 및 환복;피트니스 센터|training|O|고층 트레이닝 구역 전용 체력 단련;컨디셔닝룸|support|O|연습 후 스트레칭·자세 교정·회복;샤워실|support|O|운동 후 샤워'),
- spec('10F','아티스트 안무 · 퍼포먼스','아티스트 안무실|artist|F|데뷔 그룹의 공식 안무 및 투어 연습;아티스트 퍼포먼스실|artist|F|데뷔 아티스트 무대 리허설 및 퍼포먼스 점검'),
- spec('9F','앨범 녹음 · 프로듀싱','앨범 녹음실|production|F|정식 발매곡 녹음, 컨트롤룸·방음 부스 포함;아티스트 프로듀싱룸|production|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링'),
- spec('8F','아티스트 스타일링','스타일링룸|artist|F|헤어·메이크업, 의상 보관 및 피팅;대기실|artist|F|공식 스케줄 전 대기'),
- spec('7F','콘텐츠 촬영 · 편집','촬영 스튜디오|artist|F|사진 및 영상 촬영 겸용;라이브 방송실|artist|F|실시간 방송 제작과 스트리밍, 짧은 영상 콘텐츠 촬영;영상 편집실|artist|F|영상 편집·색보정·시각효과 등 후반 제작'),
- spec('6F','아티스트 프로듀싱 · 음악 기획','아티스트 프로듀싱룸|production|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링;회의실|management|X|곡 선정·제작 방향·예산 회의'),
- spec('5F','레이블 · 아티스트 운영','매니지먼트팀 사무실|management|X|데뷔 아티스트 일정·현장 운영;캐스팅팀 사무실|management|X|연습생 오디션·선발 운영;레이블 운영팀 사무실|management|X|레이블별 프로젝트 관리'),
- spec('4F','본사 사무 구역','경영기획팀 사무실|management|X|전사 예산·인력 계획;마케팅팀 사무실|management|X|홍보·광고 및 브랜딩;해외사업팀 사무실|management|X|해외 파트너십·유통'),
- spec('3F','공용 복지','구내식당|social|O|근무자와 연습생의 식사 및 휴식;공용 라운지|social|O|대면 교류와 대기'),
- spec('2F','신인 교육 · 상담','강의실|training|O|입사 오리엔테이션과 공통 교육;연습생 상담실|support|O|선발 및 입사 관련 상담;프라이빗 미팅룸|management|X|외부 관계자와 비공개 계약 논의'),
- spec('1F','공개 로비','로비|social|O|사옥 출입·방문 안내;카페|social|O|방문객·연습생 음료와 대기'),
- spec('B1','주차 · 물류 · 설비','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 재고 관리;장비 보관실|management|X|사옥 장비·소모품 보관;설비실|management|X|방문 불가 배경 공간 · 전기·공조 설비')]}]},
+  spec('RF','루프탑 라운지','루프탑 라운지|artist|F|실내외 휴식과 소규모 사내 교류 행사'),
+  spec('16F','최고경영층','대표실|management|X|최고경영 의사결정;회의실|management|X|전사 경영회의와 승인;프라이빗 미팅룸|management|X|주요 외부 파트너와 비공개 접견·상담'),
+  spec('15F','레이블 · 아티스트 운영','매니지먼트팀 사무실|management|X|데뷔 아티스트 일정·현장 운영;캐스팅팀 사무실|management|X|연습생 오디션·선발 운영;레이블 운영팀 사무실|management|X|레이블별 프로젝트 관리'),
+  spec('14F','본사 사무 구역','경영기획팀 사무실|management|X|전사 예산·인력 계획;마케팅팀 사무실|management|X|홍보·광고 및 브랜딩;해외사업팀 사무실|management|X|해외 파트너십·유통'),
+  spec('13F','아티스트 프로듀싱 · 음악 기획','아티스트 프로듀싱룸|production|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링;회의실|management|X|곡 선정·제작 방향·예산 회의'),
+  spec('12F','아티스트 안무 · 퍼포먼스','아티스트 안무실|artist|F|데뷔 그룹의 공식 안무 및 투어 연습;아티스트 퍼포먼스실|artist|F|데뷔 아티스트 무대 리허설 및 퍼포먼스 점검'),
+  spec('11F','앨범 녹음 · 프로듀싱','앨범 녹음실|production|F|정식 발매곡 녹음, 컨트롤룸·방음 부스 포함;아티스트 프로듀싱룸|production|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링'),
+  spec('10F','연습생 복지 · 피트니스','연습생 라운지|social|O|연습 사이 식사·휴식·교류;연습생 상담실|support|O|정기 면담과 진로 상담;락커룸|support|O|개인 물품 보관 및 환복;피트니스 센터|training|O|고층 트레이닝 구역 전용 체력 단련;컨디셔닝룸|support|O|연습 후 스트레칭·자세 교정·회복;샤워실|support|O|운동 후 샤워'),
+  spec('9F','아티스트 스타일링','스타일링룸|artist|F|헤어·메이크업, 의상 보관 및 피팅;대기실|artist|F|공식 스케줄 전 대기'),
+  spec('8F','콘텐츠 촬영 · 편집','촬영 스튜디오|artist|F|사진 및 영상 촬영 겸용;라이브 방송실|artist|F|실시간 방송 제작과 스트리밍, 짧은 영상 콘텐츠 촬영;영상 편집실|artist|F|영상 편집·색보정·시각효과 등 후반 제작'),
+  spec('7F','퍼포먼스 트레이닝','퍼포먼스 스튜디오|training|O|넓은 가변 연습 공간에서 데뷔조 합동 퍼포먼스 연습;장비 보관실|management|X|카메라·스피커·무대 표시물 보관'),
+  spec('6F','안무 트레이닝','대형 안무실|training|O|정규 댄스 클래스 및 팀별 안무 연습;개인 안무실|training|O|예약제 1~3인 집중 연습'),
+  spec('5F','보컬 트레이닝','개인 보컬실|training|O|여러 독립 부스를 시간제 예약하여 개인 가창 연습;보컬 레슨실|training|O|트레이너 1:1 가창·발성 지도'),
+  spec('4F','창작 · 강의','강의실|training|O|음악 이론·작사·외국어·무대 표현 및 공통 교육;프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합'),
+  spec('3F','공용 복지','구내식당|social|O|근무자와 연습생의 식사 및 휴식;공용 라운지|social|O|대면 교류와 대기'),
+  spec('2F','신인 교육 · 상담','강의실|training|O|입사 오리엔테이션과 공통 교육;연습생 상담실|support|O|선발 및 입사 관련 상담;프라이빗 미팅룸|management|X|외부 관계자와 비공개 계약 논의'),
+  spec('1F','공개 로비','로비|social|O|사옥 출입·방문 안내;카페|social|O|방문객·연습생 음료와 대기'),
+  spec('B1','주차 · 물류 · 설비','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 재고 관리;장비 보관실|management|X|사옥 장비·소모품 보관;설비실|management|X|방문 불가 배경 공간 · 전기·공조 설비')]}]},
  {id:5,label:'초대형',description:'본사 + 고층 트레이닝동 + 전문 제작동',buildings:[
  {id:'A',name:'본사 HQ',floors:[
  spec('12F','최고경영진','대표실|management|X|복수 레이블 및 회사 전체 경영;회의실|management|X|사업 승인과 의사결정'),
@@ -154,7 +154,7 @@ const GRADE_NOTES={
 1:'공간을 겸용하고 설비는 최소한으로 운영해요. B1 안무실과 3F 대표실이 소형 사옥의 대표적인 격차입니다.',
 2:'보컬·안무실을 분리하지만 평가와 제작은 기존 방을 예약·전환하여 사용합니다.',
 3:'교육·음악 작업·데뷔 제작 공간을 구분하되, 월말평가는 4층 퍼포먼스 스튜디오에서 진행합니다.',
-4:'상층부 11~15층은 연습생 트레이닝 및 피트니스, 7~10층은 FINALSTAGE 전용 제작·아티스트, 4~6층은 직원 업무 및 프로듀싱입니다.',
+4:'16~14층은 경영·사무, 13층은 기획·프로듀싱, 12~8층은 데뷔 아티스트 구역, 10층은 피트니스, 7~4층은 연습생 트레이닝입니다.',
 5:'피트니스는 B동 7층으로 이동했습니다. 훈련은 B동 고층, 데뷔 음반 녹음과 제작은 C동, 운영·매니지먼트는 A동에 분리합니다. 건물 간 이동이 필요해집니다.'};
 const FLOOR_NOTES={
 '3:A:4F':'중견 회사에 상설 평가홀·심사 대기실을 따로 두는 대신, 퍼포먼스 스튜디오를 합동 연습과 월말평가에 겸용합니다.',
@@ -189,7 +189,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','offstage','finalstage'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -440,6 +440,22 @@ $('undoBtn').onclick=()=>historyAction(undo,redo);$('redoBtn').onclick=()=>histo
 window.addEventListener('keydown',e=>{const inp=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();historyAction(e.shiftKey?redo:undo,e.shiftKey?undo:redo)}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();historyAction(redo,undo)}else if(e.key==='Escape'){chosenTemplate=null;mapTool='select';renderLibrary();updateTools()}else if((e.key==='Delete'||e.key==='Backspace')&&!inp){e.preventDefault();removeRoom()}});
 function download(name,blob){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 const filenameBase=()=>`offstage_grade${gradeId}_${buildingId}_${floorId}`;
+$('applyOfficeBtn').onclick=()=>{
+ if(!confirm('대형의 사무실을 상층부로 올리고 나머지 층을 재배치할까요? 각 방의 수정 내용과 좌표는 함께 이동합니다. 적용 전 전체 JSON을 백업하세요.'))return;
+ const targets={"16F":"16F","15F":"5F","14F":"4F","13F":"6F","12F":"10F","11F":"9F","10F":"11F","9F":"8F","8F":"7F","7F":"15F","6F":"14F","5F":"13F","4F":"12F","3F":"3F","2F":"2F","1F":"1F","B1":"B1","RF":"RF"};
+ const g=data.find(g=>g.id===4),building=g&&g.buildings.find(b=>b.id==='A');
+ if(!building){toast('대형 사옥을 찾을 수 없어요');return;}
+ try{localStorage.setItem('offstage.office.before.'+Date.now(),JSON.stringify({data}));}catch(e){}
+ mutate(()=>{
+  const source=Object.fromEntries(building.floors.map(f=>[f.id,deep(f)]));
+  building.floors=building.floors.map(f=>{
+   const picked=source[targets[f.id]]||source[f.id];
+   return {...picked,id:f.id};
+  });
+  gradeId=4;buildingId='A';floorId='15F';selectedId=null;fixDuplicateIds();
+ });
+ toast('대형 사무실 상층 재배치 완료');
+};
 $('applyBasementBtn').onclick=()=>{
  if(!confirm('대형 소속사의 B2를 없애고 주차·물류·장비·설비 시설을 B1에 통합할까요? 기존 대형 사옥의 수동 배치는 교체됩니다. 먼저 전체 JSON을 저장하세요.'))return;
  try{localStorage.setItem('offstage.large.before.basement.'+Date.now(),JSON.stringify({data}));}catch(e){}
