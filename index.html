@@ -45,7 +45,7 @@
 @media(max-width:850px){.left{max-height:none;overflow:visible}.left .floors{max-height:none}.left .left-sections{display:grid;grid-template-columns:1fr;gap:12px}.catalogList{max-height:195px;min-height:100px}.catalogItem small{max-width:calc(100vw - 130px)}.shell{display:flex;flex-direction:column}}
 </style></head><body>
 <div class="app">
-  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
+  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn primary" id="analyzeLargeBtn">현재 대형 배치 분석·초대형 재구성</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
   <div class="shell">
     <aside class="left"><div class="left-sections">
       <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
@@ -70,7 +70,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v15';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v16';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -190,7 +190,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v15','offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','offstage','finalstage'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -495,6 +495,95 @@ $('undoBtn').onclick=()=>historyAction(undo,redo);$('redoBtn').onclick=()=>histo
 window.addEventListener('keydown',e=>{const inp=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();historyAction(e.shiftKey?redo:undo,e.shiftKey?undo:redo)}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();historyAction(redo,undo)}else if(e.key==='Escape'){chosenTemplate=null;mapTool='select';renderLibrary();updateTools()}else if((e.key==='Delete'||e.key==='Backspace')&&!inp){e.preventDefault();removeRoom()}});
 function download(name,blob){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 const filenameBase=()=>`offstage_grade${gradeId}_${buildingId}_${floorId}`;
+
+function inferFloorTitle(f) {
+ const rooms=f.rooms.filter(r=>r.name?.trim());if(!rooms.length)return f.title;
+ const names=rooms.map(r=>r.name),joined=names.join(' ');
+ const has=q=>q.test(joined);
+ const cat={};rooms.forEach(r=>cat[r.category]=(cat[r.category]||0)+1);
+ if(has(/대표실/))return '경영진 · 대표실';
+ if(has(/사무실|경영기획|레이블 운영|마케팅팀|홍보팀|A&R팀|인사팀|해외사업팀|법무팀|캐스팅팀|매니지먼트팀/))return '경영 · 부서 사무';
+ if(has(/로비|카페/) && rooms.some(r=>/로비/.test(r.name)))return '로비 · 방문객 편의';
+ if(has(/피트니스|컨디셔닝/))return '체력 · 컨디셔닝';
+ if(has(/안무|퍼포먼스/) && has(/보컬/))return '종합 트레이닝';
+ if(has(/아티스트 안무|아티스트 퍼포먼스|아티스트 보컬/))return '아티스트 트레이닝';
+ if(has(/퍼포먼스/))return '퍼포먼스 · 리허설';
+ if(has(/안무/))return '안무 트레이닝';
+ if(has(/보컬/))return '보컬 트레이닝';
+ if(has(/강의실|상담실/))return '교육 · 상담';
+ if(has(/앨범 녹음|데모 녹음|프로듀싱룸/))return '음악 제작 · 녹음';
+ if(has(/촬영|라이브 방송|영상 편집/))return '콘텐츠 제작';
+ if(has(/스타일링|대기실/))return '스타일링 · 아티스트 준비';
+ if(has(/라운지|구내식당|탕비실|매점/))return '휴게 · 편의';
+ if(has(/주차장|물류실|설비실|장비 보관/))return '물류 · 시설 관리';
+ if(has(/미팅룸|회의실/))return '미팅 · 회의';
+ const most=Object.entries(cat).sort((a,b)=>b[1]-a[1])[0]?.[0];
+ return ({production:'제작 시설',training:'트레이닝 시설',support:'지원 시설',social:'공용 편의',artist:'아티스트 시설',management:'운영 사무',evaluation:'평가 · 리허설'})[most]||f.title;
+}
+function rebuildMegaFromLarge(large,previous){
+ const A=[],B=[],C=[];
+ const classify=r=>{
+  const n=r.name||'';
+  if(/로비|카페|구내식당|매점|탕비실|브랜드 전시|회의실|미팅룸|사무실|대표실|법무|경영기획|마케팅|매니지먼트팀|캐스팅팀|인사팀|레이블 운영|홍보팀|해외사업팀/.test(n))return 'A';
+  if(/보컬|안무|퍼포먼스|피트니스|컨디셔닝|락커룸|샤워실|강의실|연습생 상담|연습생 라운지/.test(n))return 'B';
+  return 'C';
+ };
+ for(const floor of large.floors){
+  if(floor.id==='RF'||floor.id.startsWith('B'))continue;
+  for(const room of floor.rooms){
+   const clone=deep(room);
+   const dest=classify(room)==='A'?A:classify(room)==='B'?B:C;
+   dest.push(clone);
+  }
+ }
+ // Never produce fabricated "empty" floors; every generated floor has assigned rooms.
+ const mk=(items,group,max=4)=>{
+  const result=[];
+  for(let i=0;i<items.length;i+=max){
+   const rooms=items.slice(i,i+max);
+   layout(rooms);
+   const fl={id:'',title:'',rooms,corridor:[]};
+   fl.title=inferFloorTitle(fl);
+   result.push(fl);
+  }
+  const len=result.length;
+  return result.map((v,i)=>({...v,id:(len-i)+'F'}));
+ };
+ // For larger facilities add extra capacity without changing names or roles entered by user.
+ function expand(src,n){
+   const dst=src.map(r=>deep(r));
+   const candidates=src.filter(r=>/안무실|보컬실|프로듀싱룸|녹음실|촬영 스튜디오/.test(r.name));
+   for(const r of candidates.slice(0,n)){
+    const copy=deep(r);copy.id='new_'+Math.random().toString(36).slice(2);dst.push(copy);
+   }
+   return dst;
+ }
+ const a=mk(A,'hq'),b=mk(expand(B,5),'training'),c=mk(expand(C,5),'production');
+ // Reuse existing building entrance / elevator settings when present.
+ const defaultsB=previous?.buildings||[];
+ const base=(id,name,floors)=>({id,name,floors,elevator:deep(defaultsB.find(b=>b.id===id)?.elevator||{x:9,y:6}),entrance:deep(defaultsB.find(b=>b.id===id)?.entrance||{x:9,y:13})});
+ return {...previous,description:'대형 사옥의 실제 편집 내용을 기반으로 재편한 복합 사옥',buildings:[base('A','본사 HQ',a),base('B','트레이닝 센터',b),base('C','제작 센터',c)]};
+}
+$('analyzeLargeBtn').onclick=()=>{
+ const large=data.find(g=>g.id===4),mega=data.find(g=>g.id===5);
+ if(!large||!mega){toast('대형·초대형 소속사 데이터를 찾을 수 없어요');return;}
+ const building=large.buildings[0],all=building.floors;
+ const empty=all.filter(f=>!f.rooms?.some(r=>r.name?.trim()&&r.name!=='미배정'));
+ const msg='현재 브라우저의 대형 배치를 분석합니다.\n비어 있는 층 '+empty.length+'개'+(empty.length?' ('+empty.map(f=>f.id).join(', ')+')':'')+'를 삭제하고 남은 층의 구역명을 다시 정합니다.\n그 구성으로 초대형 3개 동도 재생성합니다.\n\n초대형 기존 수동 배치는 교체됩니다. 적용 전 JSON을 내려받아 백업하세요. 계속할까요?';
+ if(!confirm(msg))return;
+ try{localStorage.setItem('offstage.before.analysis.'+Date.now(),JSON.stringify(snapshot()));}catch(e){}
+ mutate(()=>{
+   building.floors=all.filter(f=>f.rooms?.some(r=>r.name?.trim()&&r.name!=='미배정'));
+   if(!building.floors.length){toast('대형 소속사에 방이 하나도 없어요');return false;}
+   for(const floor of building.floors)floor.title=inferFloorTitle(floor);
+   const next=rebuildMegaFromLarge(large,mega);
+   data=data.map(g=>g.id===5?next:g);
+   gradeId=4;buildingId='A';floorId=building.floors.find(f=>f.id===floorId)?.id||building.floors[0].id;selectedId=null;
+   fixDuplicateIds();
+ });
+ toast('대형의 빈 층 제거·구역명 갱신·초대형 재구성이 완료됐어요');
+};
+
 $('applyEducationBtn').onclick=()=>{
  const g=data.find(g=>g.id===4),b=g?.buildings.find(x=>x.id==='A');if(!b){toast('대형 사옥을 찾을 수 없어요');return;}
  const f13=b.floors.find(x=>x.id==='13F'),f12=b.floors.find(x=>x.id==='12F'),f2=b.floors.find(x=>x.id==='2F'),f4=b.floors.find(x=>x.id==='4F');
