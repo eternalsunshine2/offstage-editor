@@ -45,7 +45,7 @@
 @media(max-width:850px){.left{max-height:none;overflow:visible}.left .floors{max-height:none}.left .left-sections{display:grid;grid-template-columns:1fr;gap:12px}.catalogList{max-height:195px;min-height:100px}.catalogItem small{max-width:calc(100vw - 130px)}.shell{display:flex;flex-direction:column}}
 </style></head><body>
 <div class="app">
-  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn primary" id="analyzeLargeBtn">현재 대형 배치 분석·초대형 재구성</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
+  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn" id="renumberLargeBtn">대형 층 번호 정렬</button><button class="topBtn primary" id="analyzeLargeBtn">현재 대형 배치 분석·초대형 재구성</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
   <div class="shell">
     <aside class="left"><div class="left-sections">
       <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
@@ -520,6 +520,18 @@ function inferFloorTitle(f) {
  const most=Object.entries(cat).sort((a,b)=>b[1]-a[1])[0]?.[0];
  return ({production:'제작 시설',training:'트레이닝 시설',support:'지원 시설',social:'공용 편의',artist:'아티스트 시설',management:'운영 사무',evaluation:'평가 · 리허설'})[most]||f.title;
 }
+function renumberAboveGroundFloors(building){
+ const floors=building.floors.filter(f=>/^\\d+F$/.test(f.id)).sort((a,b)=>Number(a.id.slice(0,-1))-Number(b.id.slice(0,-1)));
+ const selected=building.floors.find(f=>f.id===floorId);
+ const changes=[];
+ floors.forEach((f,i)=>{const next=(i+1)+'F';if(f.id!==next)changes.push(f.id+' → '+next);f.id=next;});
+ building.floors.sort((a,b)=>{
+  const score=id=>id==='RF'?10000:/^\\d+F$/.test(id)?Number(id.slice(0,-1)):/^B\\d+$/.test(id)?-Number(id.slice(1)):0;
+  return score(b.id)-score(a.id);
+ });
+ if(selected&&gradeId===4&&buildingId===building.id)floorId=selected.id;
+ return changes;
+}
 function rebuildMegaFromLarge(large,previous){
  const A=[],B=[],C=[];
  const classify=r=>{
@@ -564,6 +576,14 @@ function rebuildMegaFromLarge(large,previous){
  const base=(id,name,floors)=>({id,name,floors,elevator:deep(defaultsB.find(b=>b.id===id)?.elevator||{x:9,y:6}),entrance:deep(defaultsB.find(b=>b.id===id)?.entrance||{x:9,y:13})});
  return {...previous,description:'대형 사옥의 실제 편집 내용을 기반으로 재편한 복합 사옥',buildings:[base('A','본사 HQ',a),base('B','트레이닝 센터',b),base('C','제작 센터',c)]};
 }
+$('renumberLargeBtn').onclick=()=>{
+ const g=data.find(g=>g.id===4),b=g?.buildings?.[0];if(!b)return;
+ const ids=b.floors.filter(f=>/^\\d+F$/.test(f.id)).map(f=>Number(f.id.slice(0,-1))).sort((a,c)=>a-c);
+ if(ids.every((n,i)=>n===i+1)){toast('대형 사옥 층 번호가 이미 연속돼 있어요');return;}
+ if(!confirm('비어 있는 번호를 메우도록 대형 사옥 지상층 번호를 연속으로 재정렬할까요? 방·복도·층 이름은 유지합니다.'))return;
+ mutate(()=>{const changes=renumberAboveGroundFloors(b);g.description='지상 '+ids.length+'층 + 지하 '+b.floors.filter(f=>/^B\\d+$/.test(f.id)).length+'층 + 옥상';selectedId=null;});
+ toast('층수 재정렬 완료. 기존 배치와 구역명은 유지했어요.');
+};
 $('analyzeLargeBtn').onclick=()=>{
  const large=data.find(g=>g.id===4),mega=data.find(g=>g.id===5);
  if(!large||!mega){toast('대형·초대형 소속사 데이터를 찾을 수 없어요');return;}
@@ -575,6 +595,8 @@ $('analyzeLargeBtn').onclick=()=>{
  mutate(()=>{
    building.floors=all.filter(f=>f.rooms?.some(r=>r.name?.trim()&&r.name!=='미배정'));
    if(!building.floors.length){toast('대형 소속사에 방이 하나도 없어요');return false;}
+   renumberAboveGroundFloors(building);
+   large.description='지상 '+building.floors.filter(f=>/^\\d+F$/.test(f.id)).length+'층 + 지하 '+building.floors.filter(f=>/^B\\d+$/.test(f.id)).length+'층 + 옥상';
    for(const floor of building.floors)floor.title=inferFloorTitle(floor);
    const next=rebuildMegaFromLarge(large,mega);
    data=data.map(g=>g.id===5?next:g);
