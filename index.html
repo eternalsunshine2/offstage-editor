@@ -50,7 +50,7 @@
     <aside class="left"><div class="left-sections">
       <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
       <section><div class="side-heading">02 / 사옥 선택</div><div class="buildingRow" id="buildingTabs"></div></section>
-      <section><div class="side-heading">03 / 층 선택 <span id="floorCount"></span></div><div class="floors" id="floorList"></div></section>
+      <section><div class="side-heading">03 / 층 선택 <span id="floorCount"></span></div><div class="floors" id="floorList"></div><div class="corridorTools"><button class="toolBtn" id="copyFloorBtn">⧉ 현재 층 복사</button><button class="toolBtn" id="pasteFloorBtn">▤ 현재 층에 붙여넣기</button></div><div class="toolTip" id="floorClipboardStatus">복사한 층 없음 · 층 번호는 붙여넣어도 유지됩니다.</div></section>
       <section><div class="side-heading">04 / 장소 라이브러리 <span id="catalogCount"></span></div><div class="catalogHelp">모든 소속사에서 사용할 수 있는 장소. <b>끌어서 기존 칸에 놓으면 내용 교체</b>, 빈 곳에 놓으면 새 칸 생성. 휴대폰은 목록 선택 후 지도를 탭해도 돼요.</div><input type="search" id="catalogSearch" placeholder="장소 검색 (예: 보컬실)" autocomplete="off" aria-label="장소 이름 검색"><select id="catalogFilter" aria-label="장소 분류"><option value="all">전체 분류</option><option value="training">연습</option><option value="production">제작</option><option value="evaluation">평가</option><option value="support">지원</option><option value="social">교류·편의</option><option value="artist">아티스트</option><option value="management">경영·사무</option></select><div class="catalogSelection" id="catalogSelection">장소를 선택하거나 끌어오세요.</div><div class="catalogList" id="catalogList"></div><button id="clearCatalogBtn" class="pillBtn catalogClear">↺ 장소 선택 해제</button></section>
       <section><div class="side-heading">05 / 출입 권한 미리보기</div><div class="stageRow"><button class="stageBtn" data-stage="edit">전체 편집</button><button class="stageBtn" data-stage="offstage">OFFSTAGE</button><button class="stageBtn" data-stage="finalstage">FINALSTAGE</button></div><div class="stageExplain">공간 배정 및 복도 수정은 '전체 편집'에서 이용할 수 있어요.</div></section>
       </div><div class="sideBottom"><strong>레이아웃은 회사별로 독립적</strong><br>등급 전환 후 배치한 공간은 그대로 보존돼요.<br>브라우저에 자동 저장되며 JSON으로 내보낼 수 있어요.</div>
@@ -70,7 +70,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v16';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v17';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -190,7 +190,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v15','offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v16','offstage.agency.floor.editor.v15','offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','offstage','finalstage'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -360,6 +360,21 @@ $('catalogList').addEventListener('pointercancel',endLibraryDrag);
 
 $('gradeList').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-grade]');if(!b)return;gradeId=+b.dataset.grade;buildingId='A';floorId=getGrade().buildings[0].floors.find(f=>f.id==='3F')?.id||getGrade().buildings[0].floors[0].id;selectedId=null;renderAll();save()});
 $('buildingTabs').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-building]');if(!b)return;buildingId=b.dataset.building;floorId=getBuilding().floors.find(f=>f.id==='3F')?.id||getBuilding().floors[0].id;selectedId=null;renderAll();save()});
+let floorClipboard=null;
+function updateFloorClipboard(){const el=$('floorClipboardStatus');if(el)el.textContent=floorClipboard?'복사됨: '+floorClipboard.grade+'등급 / '+floorClipboard.building+'동 / '+floorClipboard.floor+' · '+floorClipboard.rooms.length+'개 방':'복사한 층 없음 · 층 번호는 붙여넣어도 유지됩니다.';}
+$('copyFloorBtn').onclick=()=>{
+ const floor=getFloor();floorClipboard={grade:gradeId,building:buildingId,floor:floor.id,rooms:deep(floor.rooms),corridor:deep(floor.corridor||[])};
+ updateFloorClipboard();toast(floor.id+' 방·복도 배치를 복사했어요');
+};
+$('pasteFloorBtn').onclick=()=>{
+ if(!floorClipboard){toast('먼저 복사할 층을 선택하세요');return;}
+ const target=getFloor();if(!confirm(floorClipboard.floor+'에서 복사한 '+floorClipboard.rooms.length+'개 방과 복도를 '+target.id+'에 붙여넣을까요? 대상 층의 기존 방과 복도는 교체됩니다. 층 번호와 층 이름, 엘리베이터·현관은 유지됩니다.'))return;
+ mutate(()=>{
+  target.rooms=deep(floorClipboard.rooms).map(r=>({...r,id:'copy_'+Math.random().toString(36).slice(2)}));
+  target.corridor=deep(floorClipboard.corridor);
+  selectedId=null;fixDuplicateIds();
+ });toast(target.id+'에 붙여넣기 완료. 실행 취소 가능');
+};
 let floorTapSwap=null;
 $('floorList').addEventListener('click',e=>{
  if(suppressFloorClick){e.preventDefault();suppressFloorClick=false;return;}
