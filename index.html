@@ -45,7 +45,7 @@
 @media(max-width:850px){.left{max-height:none;overflow:visible}.left .floors{max-height:none}.left .left-sections{display:grid;grid-template-columns:1fr;gap:12px}.catalogList{max-height:195px;min-height:100px}.catalogItem small{max-width:calc(100vw - 130px)}.shell{display:flex;flex-direction:column}}
 </style></head><body>
 <div class="app">
-  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn" id="renumberLargeBtn">대형 층 번호 정렬</button><button class="topBtn primary" id="analyzeLargeBtn">현재 대형 배치 분석·초대형 재구성</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
+  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn primary" id="cleanAllEmptyBtn">전체 빈 층 삭제·층수 정렬</button><button class="topBtn" id="renumberLargeBtn">대형 층 번호 정렬</button><button class="topBtn primary" id="analyzeLargeBtn">현재 대형 배치 분석·초대형 재구성</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
   <div class="shell">
     <aside class="left"><div class="left-sections">
       <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
@@ -70,7 +70,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v20';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v21';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -190,7 +190,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v19','offstage.agency.floor.editor.v18','offstage.agency.floor.editor.v17','offstage.agency.floor.editor.v16','offstage.agency.floor.editor.v15','offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v20','offstage.agency.floor.editor.v19','offstage.agency.floor.editor.v18','offstage.agency.floor.editor.v17','offstage.agency.floor.editor.v16','offstage.agency.floor.editor.v15','offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','apprentice','offstage','finalstage','staff'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -605,6 +605,42 @@ function rebuildMegaFromLarge(large,previous){
  const base=(id,name,floors)=>({id,name,floors,elevator:deep(defaultsB.find(b=>b.id===id)?.elevator||{x:9,y:6}),entrance:deep(defaultsB.find(b=>b.id===id)?.entrance||{x:9,y:13})});
  return {...previous,description:'대형 사옥의 실제 편집 내용을 기반으로 재편한 복합 사옥',buildings:[base('A','본사 HQ',a),base('B','트레이닝 센터',b),base('C','제작 센터',c)]};
 }
+
+function compactFloorNumbers(building){
+ const floors=building.floors;
+ const ground=floors.filter(f=>/^\d+F$/.test(f.id)).sort((a,b)=>Number(a.id.slice(0,-1))-Number(b.id.slice(0,-1)));
+ const basement=floors.filter(f=>/^B\d+$/.test(f.id)).sort((a,b)=>Number(a.id.slice(1))-Number(b.id.slice(1)));
+ ground.forEach((f,i)=>f.id=(i+1)+'F');
+ basement.forEach((f,i)=>f.id='B'+(i+1));
+ const order=id=>id==='RF'?10000:/^\d+F$/.test(id)?Number(id.slice(0,-1)):/^B\d+$/.test(id)?-Number(id.slice(1)):-1000;
+ floors.sort((a,b)=>order(b.id)-order(a.id));
+}
+$('cleanAllEmptyBtn').onclick=()=>{
+ const all=data.flatMap(g=>g.buildings.map(b=>({g,b})));
+ const empty=all.flatMap(({g,b})=>b.floors.filter(f=>!f.rooms?.some(r=>r.name?.trim()&&r.name.trim()!=='미배정')).map(f=>g.label+' / '+b.name+' / '+f.id));
+ if(!empty.length){
+  if(!confirm('빈 층은 없습니다. 전체 사옥의 지상·지하 층 번호를 연속으로 다시 정렬할까요?'))return;
+ }else if(!confirm('모든 소속사에서 방이 하나도 없는 층 '+empty.length+'개를 삭제하고 층 번호를 다시 정렬할까요?\n\n'+empty.slice(0,12).join('\n')+(empty.length>12?'\n외 '+(empty.length-12)+'개':'')+'\n\n방이 들어 있는 층의 배치는 유지됩니다.'))return;
+ try{localStorage.setItem('offstage.before.empty.cleanup.'+Date.now(),JSON.stringify(snapshot()));}catch(e){}
+ mutate(()=>{
+  const activeFloor=getFloor();
+  for(const {g,b} of all){
+   const keep=b.floors.filter(f=>f.rooms?.some(r=>r.name?.trim()&&r.name.trim()!=='미배정'));
+   // Leave an entirely empty building with one blank 1F for continued editing.
+   b.floors=keep.length?keep:[{id:'1F',title:'미배정',rooms:[],corridor:[]}];
+   compactFloorNumbers(b);
+  }
+  for(const g of data){
+    if(g.id===5){g.description='본사 + 트레이닝동 + 제작동';continue;}
+    const b=g.buildings[0],n=b.floors.filter(f=>/^\d+F$/.test(f.id)).length,k=b.floors.filter(f=>/^B\d+$/.test(f.id)).length;
+    g.description='지상 '+n+'층'+(k?' + 지하 '+k+'층':'')+(b.floors.some(f=>f.id==='RF')?' + 옥상':'');
+  }
+  if(activeFloor&&getBuilding().floors.includes(activeFloor))floorId=activeFloor.id;
+  else floorId=getBuilding().floors.find(f=>f.id==='1F')?.id||getBuilding().floors[0].id;
+  selectedId=null;
+ });
+ toast(empty.length+'개 빈 층을 정리하고 층 번호를 재정렬했어요.');
+};
 $('renumberLargeBtn').onclick=()=>{
  const g=data.find(g=>g.id===4),b=g?.buildings?.[0];if(!b)return;
  const ids=b.floors.filter(f=>/^\\d+F$/.test(f.id)).map(f=>Number(f.id.slice(0,-1))).sort((a,c)=>a-c);
