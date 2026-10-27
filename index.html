@@ -70,7 +70,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v14';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v15';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -190,7 +190,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','offstage','finalstage'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -360,20 +360,33 @@ $('catalogList').addEventListener('pointercancel',endLibraryDrag);
 
 $('gradeList').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-grade]');if(!b)return;gradeId=+b.dataset.grade;buildingId='A';floorId=getGrade().buildings[0].floors.find(f=>f.id==='3F')?.id||getGrade().buildings[0].floors[0].id;selectedId=null;renderAll();save()});
 $('buildingTabs').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-building]');if(!b)return;buildingId=b.dataset.building;floorId=getBuilding().floors.find(f=>f.id==='3F')?.id||getBuilding().floors[0].id;selectedId=null;renderAll();save()});
-$('floorList').addEventListener('click',e=>{if(suppressFloorClick){e.preventDefault();suppressFloorClick=false;return;} if(e.target.closest('[data-floor-handle]'))return;chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-floor]');if(!b)return;floorId=b.dataset.floor;selectedId=null;renderAll();save()});
+let floorTapSwap=null;
+$('floorList').addEventListener('click',e=>{
+ if(suppressFloorClick){e.preventDefault();suppressFloorClick=false;return;}
+ if(e.target.closest('[data-floor-handle]'))return;
+ const btn=e.target.closest('[data-floor]');if(!btn)return;
+ const target=btn.dataset.floor,now=Date.now();
+ if(floorTapSwap&&floorTapSwap.target===target&&floorTapSwap.grade===gradeId&&floorTapSwap.building===buildingId&&now-floorTapSwap.at<700){
+  const source=floorTapSwap.source;floorTapSwap=null;
+  if(source!==target){swapFloorPlans(source,target,false);return;}
+ }
+ const source=floorTapSwap?.source&&now-floorTapSwap.at<700?floorTapSwap.source:floorId;
+ floorTapSwap=source!==target?{source,target,grade:gradeId,building:buildingId,at:now}:null;
+ chosenTemplate=null;swapTap=null;floorId=target;selectedId=null;renderAll();save();
+});
 // Whole-floor content swapping: IDs/level numbers stay fixed, rooms, corridors and title move together.
 let floorPointer=null,suppressFloorClick=false;
-function swapFloorPlans(fromId,toId){
+function swapFloorPlans(fromId,toId,includeTitle=true){
  if(fromId===toId)return;
  const building=getBuilding(),a=building.floors.find(f=>f.id===fromId),b=building.floors.find(f=>f.id===toId);
  if(!a||!b)return;
  mutate(()=>{
   const contentA={rooms:deep(a.rooms),title:a.title,corridor:deep(a.corridor||[])};
-  a.rooms=deep(b.rooms);a.title=b.title;a.corridor=deep(b.corridor||[]);
-  b.rooms=contentA.rooms;b.title=contentA.title;b.corridor=contentA.corridor;
+  a.rooms=deep(b.rooms);if(includeTitle)a.title=b.title;a.corridor=deep(b.corridor||[]);
+  b.rooms=contentA.rooms;if(includeTitle)b.title=contentA.title;b.corridor=contentA.corridor;
   selectedId=null;floorId=toId;
  });
- toast(fromId+' ↔ '+toId+' 층 전체 배치를 교환했어요. 실행 취소도 가능해요.');
+ toast(fromId+' ↔ '+toId+' 방·복도 배치를 교환했어요. '+(includeTitle?'층 구역명도 교환됩니다.':'층 이름은 유지됩니다.')+' 실행 취소 가능');
 }
 const floorPane=$('floorList');
 function floorHit(x,y){const el=document.elementFromPoint(x,y)?.closest('[data-floor]');return el&&floorPane.contains(el)?el:null;}
