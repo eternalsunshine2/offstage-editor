@@ -44,7 +44,7 @@
 @media(max-width:850px){.left{max-height:none;overflow:visible}.left .floors{max-height:none}.left .left-sections{display:grid;grid-template-columns:1fr;gap:12px}.catalogList{max-height:195px;min-height:100px}.catalogItem small{max-width:calc(100vw - 130px)}.shell{display:flex;flex-direction:column}}
 </style></head><body>
 <div class="app">
-  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
+  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
   <div class="shell">
     <aside class="left"><div class="left-sections">
       <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
@@ -69,7 +69,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v8';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v9';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -102,7 +102,7 @@ function defData(){return [
  spec('14F','안무 트레이닝','대형 안무실|training|O|정규 댄스 클래스 및 팀별 안무 연습;개인 안무실|training|O|예약제 1~3인 집중 연습'),
  spec('13F','보컬 트레이닝','개인 보컬실|training|O|여러 독립 부스를 시간제 예약하여 개인 가창 연습;보컬 레슨실|training|O|트레이너 1:1 가창·발성 지도'),
  spec('12F','창작 · 강의','강의실|training|O|음악 이론·작사·외국어·무대 표현 및 공통 교육;프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합'),
- spec('11F','연습생 전용 지원','연습생 라운지|social|O|연습 사이 식사·휴식·교류;연습생 상담실|support|O|정기 면담과 진로 상담;락커룸|support|O|개인 물품 보관 및 환복'),
+ spec('11F','연습생 복지 · 피트니스','연습생 라운지|social|O|연습 사이 식사·휴식·교류;연습생 상담실|support|O|정기 면담과 진로 상담;락커룸|support|O|개인 물품 보관 및 환복;피트니스 센터|training|O|고층 트레이닝 구역 전용 체력 단련;컨디셔닝룸|support|O|연습 후 스트레칭·자세 교정·회복;샤워실|support|O|운동 후 샤워'),
  spec('10F','아티스트 안무 · 퍼포먼스','아티스트 안무실|artist|F|데뷔 그룹의 공식 안무 및 투어 연습;아티스트 퍼포먼스실|artist|F|데뷔 아티스트 무대 리허설 및 퍼포먼스 점검'),
  spec('9F','앨범 녹음 · 프로듀싱','앨범 녹음실|production|F|정식 발매곡 녹음, 컨트롤룸·방음 부스 포함;아티스트 프로듀싱룸|production|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링'),
  spec('8F','아티스트 스타일링','스타일링룸|artist|F|헤어·메이크업, 의상 보관 및 피팅;대기실|artist|F|공식 스케줄 전 대기'),
@@ -113,7 +113,7 @@ function defData(){return [
  spec('3F','공용 복지','구내식당|social|O|근무자와 연습생의 식사 및 휴식;공용 라운지|social|O|대면 교류와 대기'),
  spec('2F','신인 교육 · 상담','강의실|training|O|입사 오리엔테이션과 공통 교육;연습생 상담실|support|O|선발 및 입사 관련 상담;프라이빗 미팅룸|management|X|외부 관계자와 비공개 계약 논의'),
  spec('1F','공개 로비','로비|social|O|사옥 출입·방문 안내;카페|social|O|방문객·연습생 음료와 대기'),
- spec('B1','피트니스 · 컨디셔닝','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 지도하의 스트레칭·자세 교정·운동 후 회복;락커룸|support|O|운동 전후 환복;샤워실|support|O|운동 후 샤워'),
+ spec('B1','지하 지원 · 물류','물류실|management|X|물품 반입·반출과 보관;장비 보관실|management|X|소모품과 사옥 공용 장비 관리'),
  spec('B2','물류 · 설비','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 보관·재고 관리;설비실|management|X|방문 불가 배경 공간 · 전기·공조 등 기계 설비')]}]},
  {id:5,label:'초대형',description:'본사 + 고층 트레이닝동 + 전문 제작동',buildings:[
  {id:'A',name:'본사 HQ',floors:[
@@ -129,18 +129,18 @@ function defData(){return [
  spec('3F','연습생 상담 · 기초 교육','연습생 상담실|support|O|심리·진로·계약 관련 전문 상담;강의실|training|O|연습생 규정 및 안전교육'),
  spec('2F','공용 복지','구내식당|social|O|연습생과 직원 식사;공용 라운지|social|O|이동 전후 휴식과 교류'),
  spec('1F','사옥 로비','로비|social|O|건물별 출입 안내와 외부 방문 응대;카페|social|O|회사 방문객과 연습생 휴식;브랜드 전시 코너|social|O|공개된 회사 활동 소개'),
- spec('B1','공용 웰니스','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 지도하의 스트레칭·자세 교정·운동 후 회복'),
+ spec('B1','시설 관리','설비실|management|X|방문 불가 배경 공간 · 냉난방·전력 설비;장비 보관실|management|X|본사 공용 장비 보관'),
  spec('B2','주차 · 물류','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 보관·재고 관리')]},
  {id:'B',name:'고층 트레이닝 센터',floors:[
  spec('8F','아티스트 전용 연습','아티스트 퍼포먼스실|artist|F|데뷔 아티스트 무대 리허설 및 퍼포먼스 점검;아티스트 보컬실|artist|F|콘서트·컴백 보컬 연습;아티스트 안무실|artist|F|데뷔 아티스트 전용 단체 안무 연습'),
- spec('7F','퍼포먼스 트레이닝','퍼포먼스 스튜디오|evaluation|O|대규모 합동 리허설 및 공식 실기 평가;장비 보관실|management|X|이동식 조명과 장비 보관'),
- spec('6F','안무 트레이닝','대형 안무실|training|O|정규 퍼포먼스·그룹 안무 수업;대형 안무실|training|O|팀별 연습과 데뷔조 합동훈련;소형 안무실|training|O|소규모 그룹의 보조 안무 연습'),
+ spec('7F','고층 피트니스 · 회복','피트니스 센터|training|O|트레이닝 센터 내 상층부 체력 단련;컨디셔닝룸|support|O|스트레칭·자세 교정·운동 후 회복;락커룸|support|O|운동 전후 환복;샤워실|support|O|운동 후 샤워'),
+ spec('6F','안무 · 퍼포먼스 트레이닝','대형 안무실|training|O|정규 퍼포먼스·그룹 안무 수업;대형 안무실|training|O|팀별 연습과 데뷔조 합동훈련;소형 안무실|training|O|소규모 그룹의 보조 안무 연습;퍼포먼스 스튜디오|evaluation|O|합동 리허설 및 공식 실기 평가'),
  spec('5F','보컬 트레이닝','보컬 레슨실|training|O|전임 보컬 트레이너 1:1 지도;개인 보컬실|training|O|방음 개인실 예약 연습;소형 보컬실|training|O|팀별 소규모 보컬 연습'),
  spec('4F','창작 · 데모','프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합;데모 녹음실|production|O|연습용 가이드 보컬과 데모 녹음'),
  spec('3F','기초 교육 · 개별 훈련','강의실|training|O|음악 이론·작사·외국어·무대 표현 및 공통 교육;소형 안무실|training|O|개인·소규모 안무 동작 연습'),
  spec('2F','연습생 케어','연습생 라운지|social|O|레슨 사이 식사·휴식·교류;연습생 상담실|support|O|건강·진로·심리 상담 예약;락커룸|support|O|개인 짐 보관과 환복'),
  spec('1F','센터 출입','로비|support|O|시설 입장·수업 안내;공용 라운지|social|O|대기와 휴식'),
- spec('B1','체력 · 회복','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 지도하의 스트레칭·자세 교정·운동 후 회복;샤워실|support|O|운동 후 정비')]},
+ spec('B1','장비 관리 · 설비','장비 보관실|management|X|안무·음향 장비와 소모품 보관;설비실|management|X|방문 불가 배경 공간 · 트레이닝 센터 설비')]},
  {id:'C',name:'전문 제작 센터',floors:[
  spec('6F','안무 트레이닝','아티스트 프로듀싱룸|artist|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링;아티스트 미팅룸|artist|F|발매 프로젝트 및 편곡 조율'),
  spec('5F','음원 프로듀싱 · 후반 제작','아티스트 프로듀싱룸|artist|F|데뷔 아티스트의 편곡·믹싱·마스터링 등 음원 후반 작업;프로듀싱룸|management|X|전문 엔지니어의 음원 후반 작업'),
@@ -155,8 +155,8 @@ const GRADE_NOTES={
 1:'공간을 겸용하고 설비는 최소한으로 운영해요. B1 안무실과 3F 대표실이 소형 사옥의 대표적인 격차입니다.',
 2:'보컬·안무실을 분리하지만 평가와 제작은 기존 방을 예약·전환하여 사용합니다.',
 3:'교육·음악 작업·데뷔 제작 공간을 구분하되, 월말평가는 4층 퍼포먼스 스튜디오에서 진행합니다.',
-4:'상층부 11~15층은 연습생 트레이닝, 7~10층은 FINALSTAGE 전용 제작·아티스트, 4~6층은 직원 업무 및 프로듀싱입니다.',
-5:'훈련은 B동 고층, 데뷔 음반 녹음과 제작은 C동, 운영·매니지먼트는 A동에 분리합니다. 건물 간 이동이 필요해집니다.'};
+4:'상층부 11~15층은 연습생 트레이닝 및 피트니스, 7~10층은 FINALSTAGE 전용 제작·아티스트, 4~6층은 직원 업무 및 프로듀싱입니다.',
+5:'피트니스는 B동 7층으로 이동했습니다. 훈련은 B동 고층, 데뷔 음반 녹음과 제작은 C동, 운영·매니지먼트는 A동에 분리합니다. 건물 간 이동이 필요해집니다.'};
 const FLOOR_NOTES={
 '3:A:4F':'중견 회사에 상설 평가홀·심사 대기실을 따로 두는 대신, 퍼포먼스 스튜디오를 합동 연습과 월말평가에 겸용합니다.',
 '3:A:3F':'보컬은 3F, 안무는 2F라는 기존 수정 사항을 유지했습니다. 방음이 필요한 보컬 부스를 묶었습니다.',
@@ -190,7 +190,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','offstage','finalstage'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -425,6 +425,11 @@ $('undoBtn').onclick=()=>historyAction(undo,redo);$('redoBtn').onclick=()=>histo
 window.addEventListener('keydown',e=>{const inp=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();historyAction(e.shiftKey?redo:undo,e.shiftKey?undo:redo)}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();historyAction(redo,undo)}else if(e.key==='Escape'){chosenTemplate=null;mapTool='select';renderLibrary();updateTools()}else if((e.key==='Delete'||e.key==='Backspace')&&!inp){e.preventDefault();removeRoom()}});
 function download(name,blob){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 const filenameBase=()=>`offstage_grade${gradeId}_${buildingId}_${floorId}`;
+$('applyFitnessBtn').onclick=()=>{
+ if(!confirm('대형·초대형 사옥의 피트니스/컨디셔닝 시설을 고층으로 옮길까요? 해당 등급의 수정한 배치가 교체됩니다. 먼저 전체 JSON을 저장하세요.'))return;
+ try{localStorage.setItem('offstage.fitness.before.'+Date.now(),JSON.stringify({data}));}catch(e){}
+ mutate(()=>{data=data.map(g=>(g.id===4||g.id===5)?deep(defaults.find(d=>d.id===g.id)):g);gradeId=4;buildingId='A';floorId='11F';selectedId=null;fixDuplicateIds()});toast('대형·초대형 고층 피트니스 적용 완료');
+};
 $('applyMediumBtn').onclick=()=>{
  const current=data.find(g=>g.id===3),replacement=deep(defaults.find(g=>g.id===3));
  if(current.buildings[0].floors.length===replacement.buildings[0].floors.length && current.buildings[0].floors.every((f,i)=>f.id===replacement.buildings[0].floors[i].id)){toast('이미 중견 통합 배치입니다');return;}
