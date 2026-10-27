@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OFFSTAGE / FINALSTAGE — 사옥 배치 편집기</title>
+<style>
+:root{--bg:#eaeaf0;--paper:#faf9ff;--ink:#272436;--muted:#7b788c;--border:#dcd9e7;--violet:#7760d6;--violet-light:#f1edff;--cyan:#a4e1e0;--rose:#f3b5c8;--chrome:#424252;--shadow:0 18px 55px rgba(38,32,72,.12);font-family:ui-sans-serif,system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 13% -10%,#e0d6ff,transparent 40%),#eaeaf0;color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.38;cursor:default}.app{max-width:1880px;margin:auto;min-height:100vh;padding:16px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:72px;background:#252333;color:white;padding:12px 22px;border:1px solid #50475b;border-radius:16px 16px 0 0}.mark{display:flex;align-items:center;gap:12px}.mark-symbol{width:42px;height:42px;background:linear-gradient(135deg,#b8acfc,#f2c8d6);color:#333044;display:grid;place-items:center;font-size:24px;border-radius:13px;box-shadow:0 5px 19px #b8b1f12e}.wordmark{font-weight:900;letter-spacing:-.7px;font-size:19px}.wordmark span{color:#c9bcff}.kicker{font-size:10px;letter-spacing:2px;color:#b4acbf;font-weight:700;margin-top:3px}.topActions,.actionRow,.miniTools{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.topBtn{border:1px solid #6a647b;background:#373446;color:#f2edff;padding:9px 12px;border-radius:9px;font-weight:700;font-size:12px}.topBtn:hover{background:#514b66}.topBtn.primary{background:#cbb8ff;color:#2f2046;border-color:#cbb8ff}.shell{display:grid;grid-template-columns:242px minmax(0,1fr) 282px;min-height:760px;background:#fff;border:1px solid #d8d5e2;border-top:none;border-radius:0 0 16px 16px;box-shadow:var(--shadow);overflow:hidden}.left{background:linear-gradient(170deg,#f9f7fc,#f2f0f8);border-right:1px solid var(--border);padding:22px 15px;display:flex;flex-direction:column;gap:20px;min-width:0}.side-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;color:#716d80;font-weight:850;letter-spacing:1.5px;font-size:10px;margin:0 1px 10px}.grade-list{display:grid;gap:6px}.gradeBtn{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:1px solid #e2dfec;background:#ffffffb0;border-radius:10px;padding:10px;color:#4e4a60}.gradeBtn .n{width:28px;height:28px;flex:none;display:grid;place-items:center;border-radius:8px;background:#ede8f3;font-weight:900;font-size:12px}.gradeBtn .mainLabel{font-size:12px;font-weight:800;display:block}.gradeBtn .tiny{font-size:10px;color:#9290a0;margin-top:2px;display:block}.gradeBtn.active{background:#e9e2ff;border-color:#b8a8ff;box-shadow:0 3px 11px #8971d622;color:#3b3066}.gradeBtn.active .n{background:#7763d2;color:#fff}.buildingRow{display:flex;flex-wrap:wrap;gap:5px}.buildingTab{padding:8px 10px;border-radius:7px;border:1px solid #ddd8eb;background:white;font-size:11px;font-weight:750;color:#6d677a}.buildingTab.active{background:#332f46;color:#fff;border-color:#332f46}.floors{display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:395px;overflow-y:auto;padding-right:2px}.floorBtn{border:1px solid #e3e1eb;border-radius:8px;padding:10px 7px;text-align:left;background:#ffffffb8;display:flex;align-items:center;gap:7px;min-width:0;color:#716d7d}.floorBtn b{font-size:14px;min-width:26px;color:#46425a}.floorBtn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}.floorBtn.active{background:#e8e3ff;border-color:#ae9cef}.floorBtn.active b{color:#5b47b1}.sideBottom{margin-top:auto;border-top:1px solid #d9d4e5;padding-top:14px;font-size:11px;color:#797588;line-height:1.7}.sideBottom strong{color:#383449}.stageRow{display:flex;gap:4px;flex-wrap:wrap}.stageBtn{border:1px solid #dcd5e9;color:#787286;padding:8px 9px;border-radius:7px;background:white;font-size:11px;font-weight:750}.stageBtn.active{background:#524873;color:white;border-color:#524873}.stageExplain{font-size:10px;color:#9290a2;line-height:1.6;margin:9px 1px 0}.main{padding:22px 23px 25px;min-width:0;background:#fff}.heading-line{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.eyebrow{letter-spacing:2px;color:#9894a8;font-weight:850;font-size:10px}.floorTitle{margin:6px 0 0;letter-spacing:-1.2px;font-size:clamp(21px,2.25vw,32px);font-weight:900}.floorTitle em{color:#7765bd;font-style:normal}.subtitle{font-size:12px;color:#858195;line-height:1.55;margin:7px 0 0}.pillBtn{border:1px solid #dcd7e8;background:#fafaff;color:#635a79;border-radius:9px;font-weight:750;font-size:11px;padding:9px 10px}.pillBtn:hover{background:#ede8ff;border-color:#baacf0}.pillBtn.accent{background:#59497f;color:#fff;border-color:#59497f}.pillBtn.danger:hover{background:#ffedf1;border-color:#e5a7b1;color:#ba516a}.operatingNote{display:block;margin-top:9px;border-left:3px solid #b4a2e7;background:#f5f2ff;border-radius:0 8px 8px 0;padding:9px 12px;color:#615675;font-size:11px;line-height:1.65}.board-wrap{margin-top:19px;background:linear-gradient(125deg,#efecf8,#f7f7fc);border:1px solid #ded8ef;border-radius:16px;padding:14px;box-shadow:inset 0 1px white}.mapScroll{overflow:auto;touch-action:pan-x pan-y;border-radius:10px;box-shadow:0 9px 25px rgba(54,47,82,.11)}.board{position:relative;width:100%;min-width:670px;aspect-ratio:20/14;background-color:#f8f7fb;background-image:linear-gradient(#a4a1b018 1px,transparent 1px),linear-gradient(90deg,#a4a1b018 1px,transparent 1px);background-size:5% 7.142857%;border:8px solid #b8b5c4;border-radius:8px;overflow:hidden;isolation:isolate;user-select:none}.board:before{content:'';position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 2px #f9f8ff}.walkway{position:absolute;z-index:0;left:0;right:0;top:47.8%;height:15.4%;background:repeating-linear-gradient(90deg,#e8e7f0 0,#e8e7f0 16px,#e0deeb 16px,#e0deeb 17px);border-block:2px dashed #c6c1d3;display:flex;align-items:center;justify-content:center;gap:10px;color:#aaa6b8;font-size:10px;letter-spacing:2px;font-weight:800;pointer-events:none}.core{position:absolute;z-index:2;right:.6%;top:6.5%;width:9%;height:34%;background:repeating-linear-gradient(135deg,#e0dded 0,#e0dded 7px,#ebe9f1 7px,#ebe9f1 14px);border:2px solid #b7b0c7;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;color:#80778e;font-size:10px;font-weight:900;text-align:center;pointer-events:none}.core small{font-size:8px;font-weight:700}.board .stamp{position:absolute;right:10%;bottom:2%;color:#d8d3e3;font-weight:950;font-size:48px;line-height:1;pointer-events:none}.board .compass{position:absolute;left:1%;top:1%;font-size:11px;color:#b1afbe;font-weight:900;pointer-events:none;z-index:0}.room{position:absolute;z-index:1;padding:8px;border-radius:7px;border:2px solid var(--edge);background:var(--fill);color:#413d51;box-shadow:0 3px 0 #ffffffe5 inset,0 3px 10px #514b6621;cursor:grab;touch-action:none;overflow:hidden;min-width:0}.room:after{content:'';position:absolute;inset:4px;pointer-events:none;border:1px solid #ffffff9c;border-radius:4px}.room:hover{filter:brightness(.985);z-index:3}.room.background-only{filter:saturate(.32);opacity:.85}.room.sel{border:3px solid #6d50c7;box-shadow:0 0 0 2px #fff,0 0 0 5px #9882e0,0 9px 20px #7564b33b;z-index:5}.room.dragging{cursor:grabbing;opacity:.86;z-index:12;box-shadow:0 20px 30px #39304b33}.room.conflict{border-color:#e34f73!important;box-shadow:0 0 0 3px #f8a2b2b0!important}.room .room-no{font-family:Arial,sans-serif;letter-spacing:1.5px;font-weight:800;font-size:9px;opacity:.52}.room .roomname{font-size:clamp(10px,1.12vw,14px);font-weight:850;letter-spacing:-.4px;line-height:1.25;margin:7px 0 4px;word-break:keep-all;overflow-wrap:anywhere;position:relative;z-index:2}.room .role{font-size:9px;font-weight:800;opacity:.68;letter-spacing:.1px;position:relative;z-index:2}.room .lockOverlay{position:absolute;inset:0;background:repeating-linear-gradient(135deg,#655b70b8 0,#655b70b8 6px,#746d7fb8 6px,#746d7fb8 13px);z-index:3;display:flex;align-items:center;justify-content:center;gap:3px;color:#fff;font-size:12px;font-weight:900;text-shadow:0 1px 2px #302b42;pointer-events:none}.grip{position:absolute;right:0;bottom:0;width:28px;height:28px;border-radius:7px 0 3px 0;background:#6754c3;color:white;display:none;align-items:center;justify-content:center;cursor:nwse-resize;z-index:5;font-size:17px;touch-action:none}.room.sel .grip{display:flex}.legendLine{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;margin:13px 2px 0}.legendItems{display:flex;gap:13px;flex-wrap:wrap}.legendItem{display:flex;gap:5px;align-items:center;color:#7a7689;font-size:10px;font-weight:700}.dot{height:10px;width:10px;border:1px solid #ada8b7;border-radius:3px}.hint{color:#9a95a7;font-size:10px}.underPanel{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:15px;flex-wrap:wrap}.miniLabel{font-size:10px;color:#888497;font-weight:800;letter-spacing:1.3px}.count{font-size:11px;color:#736b83}.roomchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{border:1px solid #dedbe9;background:#fff;color:#676278;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:750}.chip.selected{border-color:#9f8de5;background:#f1edff;color:#6751b0}.chip.locked{border-style:dashed}.right{padding:22px 17px;background:linear-gradient(180deg,#fbfaff,#f7f6fa);border-left:1px solid var(--border);min-width:0}.panelTitle{font-size:11px;font-weight:900;letter-spacing:1.1px;color:#5e596d}.selection-card{background:#fff;border:1px solid #dedbe9;border-radius:12px;padding:15px;margin-top:14px;box-shadow:0 8px 24px #6b5f8f0c}.selection-card h3{margin:0 0 4px;font-size:16px;letter-spacing:-.5px}.selection-card p{margin:0 0 13px;font-size:11px;color:#888397;line-height:1.6}.field{display:block;margin:12px 0}.field>span,.dim-title{display:block;color:#766f83;font-size:10px;font-weight:850;margin-bottom:5px}.field input,.field select,.field textarea,.coord input,.moveSelect{width:100%;border:1px solid #ddd8e6;background:#fcfbff;border-radius:7px;padding:9px 8px;color:#363049;font-size:12px;outline:none}.field textarea{resize:vertical;min-height:65px;line-height:1.5}.field input:focus,.field select:focus,.field textarea:focus,.coord input:focus{border-color:#9782dc;box-shadow:0 0 0 3px #a999e724}.coordgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.coord span{font-size:10px;color:#8c8297;font-weight:750;display:block;margin-bottom:3px}.coord input{padding:7px 4px;text-align:center;font-size:11px}.hintbox{border:1px solid #dfdbef;background:#f2f0fa;border-radius:9px;padding:11px;color:#7c748c;font-size:10px;line-height:1.65;margin-top:15px}.statBox{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:15px}.stat{border:1px solid #e1dceb;background:#fff;border-radius:8px;padding:11px}.stat .value{font-size:19px;font-weight:900}.stat .label{font-size:10px;color:#9691a5;margin-top:3px}.quiet{font-size:10px;color:#aaa5b5}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(22px);background:#272334;color:white;font-size:12px;line-height:1.5;padding:12px 17px;border-radius:12px;box-shadow:0 16px 34px #28213955;opacity:0;transition:.2s;z-index:100;pointer-events:none;text-align:center;max-width:88vw}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.foot{padding:12px 3px;color:#898598;font-size:10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.key{background:#eeeaf6;border:1px solid #ddd6e8;border-radius:4px;padding:1px 5px;font-size:9px;color:#6d617e}@media(max-width:1150px){.shell{grid-template-columns:194px minmax(0,1fr) 249px}.left{padding:16px 10px}.main{padding:18px 14px}.right{padding:16px 10px}.floorBtn{padding:9px 4px}.board-wrap{padding:8px}}@media(max-width:850px){.app{padding:0}.topbar{border-radius:0;padding:13px}.wordmark{font-size:16px}.kicker{font-size:8px}.topActions{justify-content:flex-end}.topBtn{font-size:10px;padding:8px}.shell{display:flex;flex-direction:column;border-radius:0}.left{border-right:0;border-bottom:1px solid #e0deec;display:block;padding:12px}.left-sections{display:grid;grid-template-columns:1fr;gap:12px}.left section{margin-bottom:10px}.grade-list{grid-template-columns:repeat(5,minmax(88px,1fr));overflow-x:auto}.gradeBtn{padding:7px 6px}.gradeBtn .n{height:24px;width:24px}.gradeBtn .mainLabel{font-size:10px}.gradeBtn .tiny{display:none}.floors{display:flex;overflow:auto;max-height:none;padding:3px}.floorBtn{flex:none;min-width:108px}.sideBottom{display:none}.main{padding:16px 12px}.mapScroll{max-height:72vh}.board{min-width:750px}.room .roomname{font-size:13px}.right{border-left:0;border-top:1px solid #e0deec;padding:17px 13px}.inspectorGrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}.selection-card{max-width:650px}.topbar{flex-wrap:wrap}}@media(max-width:520px){.brand-sub{display:none}.topActions{width:100%}.topActions button{flex:1}.inspectorGrid{display:block}.board{min-width:760px}.board-wrap{margin-top:13px}.room .roomname{font-size:13px}.hint{font-size:9px}.foot{padding:12px}}
+
+/* v7: room catalog and editable circulation */
+.shell{grid-template-columns:290px minmax(0,1fr) 282px}
+.left{max-height:calc(100vh - 110px);overflow-y:auto;scrollbar-width:thin}
+/* Keep grade and floor navigation compact so the palette is visible without hunting. */
+.left .grade-list{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.left .gradeBtn{flex-direction:column;justify-content:center;text-align:center;gap:3px;padding:7px 2px}
+.left .gradeBtn .n{width:26px;height:24px}
+.left .gradeBtn .mainLabel{font-size:10px}
+.left .gradeBtn .tiny{display:none}
+.left .floors{max-height:172px}
+.left .floorBtn{padding:8px 5px}
+.left .left-sections{display:flex;flex-direction:column;gap:16px}
+.catalogHelp{font-size:10px;line-height:1.6;color:#716a82;margin:-3px 0 10px}
+#catalogSearch,#catalogFilter{display:block;width:100%;border:1px solid #d9d5e5;background:white;padding:9px;border-radius:8px;color:#474055;font-size:12px;margin-bottom:7px;outline-color:#957be0}
+.catalogSelection{border:1px solid #cbc3e5;background:#eee9fa;color:#62528f;border-radius:8px;font-size:10px;line-height:1.5;padding:8px 10px;margin:8px 0;font-weight:700}
+.catalogList{max-height:420px;min-height:135px;overflow:auto;overscroll-behavior:contain;border:1px solid #e1dceb;background:#fff;border-radius:10px;padding:5px;display:flex;flex-direction:column;gap:4px}
+.catalogGroup{font-size:9px;letter-spacing:1px;color:#9a90a8;font-weight:900;padding:9px 7px 4px;border-top:1px solid #f0edf6}
+.catalogGroup:first-child{border-top:none}
+.catalogItem{width:100%;text-align:left;display:flex;gap:8px;align-items:center;touch-action:none;user-select:none;cursor:grab;border:1px solid #e7e3f0;background:#fbfaff;border-radius:8px;padding:8px 7px;color:#4c475a}
+.catalogItem:active{cursor:grabbing}.catalogItem:hover,.catalogItem.chosen{background:#efeaff;border-color:#ad9ae9}.catalogItem .sample{width:10px;height:32px;border-radius:4px;flex:none;background:var(--sample);border:1px solid var(--sample-edge)}
+.catalogItem strong{display:block;font-size:11px;line-height:1.25}.catalogItem small{display:block;font-size:9px;color:#847c91;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:195px;margin-top:3px}
+.catalogTag{margin-left:auto;font-size:9px;font-weight:850;color:#695e91;background:#eee9f6;border-radius:4px;padding:3px 4px;flex:none}
+.catalogClear{margin-top:7px;width:100%}
+.dragGhost{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;background:#312d46;color:#fff;border-radius:9px;padding:10px 14px;box-shadow:0 13px 30px #2b224655;font-size:12px;white-space:nowrap;transform:translate(12px,12px)}
+.board.dropTarget{box-shadow:inset 0 0 0 5px #9274e1}
+.board .room.dropHover{outline:5px solid #a47ee9!important;outline-offset:-4px;filter:brightness(.96)}
+.corridorTools{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:16px 2px -6px}
+.toolBtn{padding:9px 10px;font-size:11px;font-weight:800;border:1px solid #d6d0e5;background:white;color:#706683;border-radius:8px}
+.toolBtn.active{background:#534077;color:white;border-color:#534077}
+.toolTip{flex-basis:100%;font-size:10px;color:#80788d;padding-left:1px}
+.corridorCell{position:absolute;z-index:0;pointer-events:none;background:repeating-linear-gradient(90deg,#e5e4ed 0px,#e5e4ed 15px,#dcdae7 16px);border:1px solid #d9d5e2}
+.board.painting{cursor:crosshair;touch-action:none}
+.board.painting .room{pointer-events:none}
+@media(max-width:1150px){.shell{grid-template-columns:245px minmax(0,1fr) 249px}}
+@media(max-width:850px){.left{max-height:none;overflow:visible}.left .floors{max-height:none}.left .left-sections{display:grid;grid-template-columns:1fr;gap:12px}.catalogList{max-height:195px;min-height:100px}.catalogItem small{max-width:calc(100vw - 130px)}.shell{display:flex;flex-direction:column}}
+</style></head><body>
+<div class="app">
+  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
+  <div class="shell">
+    <aside class="left"><div class="left-sections">
+      <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
+      <section><div class="side-heading">02 / 사옥 선택</div><div class="buildingRow" id="buildingTabs"></div></section>
+      <section><div class="side-heading">03 / 층 선택 <span id="floorCount"></span></div><div class="floors" id="floorList"></div></section>
+      <section><div class="side-heading">04 / 장소 라이브러리 <span id="catalogCount"></span></div><div class="catalogHelp">모든 소속사에서 사용할 수 있는 장소. <b>끌어서 기존 칸에 놓으면 내용 교체</b>, 빈 곳에 놓으면 새 칸 생성. 휴대폰은 목록 선택 후 지도를 탭해도 돼요.</div><input type="search" id="catalogSearch" placeholder="장소 검색 (예: 보컬실)" autocomplete="off" aria-label="장소 이름 검색"><select id="catalogFilter" aria-label="장소 분류"><option value="all">전체 분류</option><option value="training">연습</option><option value="production">제작</option><option value="evaluation">평가</option><option value="support">지원</option><option value="social">교류·편의</option><option value="artist">아티스트</option><option value="management">경영·사무</option></select><div class="catalogSelection" id="catalogSelection">장소를 선택하거나 끌어오세요.</div><div class="catalogList" id="catalogList"></div><button id="clearCatalogBtn" class="pillBtn catalogClear">↺ 장소 선택 해제</button></section>
+      <section><div class="side-heading">05 / 출입 권한 미리보기</div><div class="stageRow"><button class="stageBtn" data-stage="edit">전체 편집</button><button class="stageBtn" data-stage="offstage">OFFSTAGE</button><button class="stageBtn" data-stage="finalstage">FINALSTAGE</button></div><div class="stageExplain">공간 배정 및 복도 수정은 '전체 편집'에서 이용할 수 있어요.</div></section>
+      </div><div class="sideBottom"><strong>레이아웃은 회사별로 독립적</strong><br>등급 전환 후 배치한 공간은 그대로 보존돼요.<br>브라우저에 자동 저장되며 JSON으로 내보낼 수 있어요.</div>
+    </aside>
+    <main class="main"><div class="heading-line"><div><div class="eyebrow" id="locationPath">GRADE 03 / HEADQUARTERS</div><div class="floorTitle" id="floorTitle">3F · 연습 구역</div><p class="subtitle" id="floorSubtitle">공간을 드래그해서 이동하고, 오른쪽 아래 손잡이로 크기를 조정하세요.</p><div class="operatingNote" id="floorNote"></div></div><div class="miniTools"><button id="addRoomBtn" class="pillBtn accent">＋ 공간 추가</button><button id="autoBtn" class="pillBtn">▦ 자동 정렬</button><button id="pngBtn" class="pillBtn">↓ PNG</button><button id="resetFloorBtn" class="pillBtn danger">↺ 층 초기화</button></div></div>
+      <div class="corridorTools" id="corridorTools"><span class="miniLabel">지도 도구</span><button class="toolBtn active" data-map-tool="select">▣ 공간 배정·이동</button><button class="toolBtn" data-map-tool="corridor-add">＋ 복도 그리기</button><button class="toolBtn" data-map-tool="corridor-erase">− 복도 지우기</button><button class="pillBtn" id="clearCorridorBtn">복도 전체 제거</button><span class="toolTip" id="toolTip">장소를 끌어 놓거나 칸을 탭해 배정하세요.</span></div>
+      <div class="board-wrap"><div class="mapScroll" id="mapScroll"><div class="board" id="board"><div id="corridorLayer" aria-hidden="true"></div><div class="core">⬍<small>ELEV.<br>STAIRS</small></div><div class="compass">✳ N / FLOOR PLAN</div><div class="stamp" id="stamp">3F</div><div id="roomLayer"></div></div></div><div class="legendLine"><div class="legendItems"><div class="legendItem"><span class="dot" style="background:#e5dffc"></span>연습</div><div class="legendItem"><span class="dot" style="background:#d6eaf1"></span>제작</div><div class="legendItem"><span class="dot" style="background:#f4dfdf"></span>평가</div><div class="legendItem"><span class="dot" style="background:#e2efd8"></span>지원</div><div class="legendItem"><span class="dot" style="background:#f8ecd3"></span>교류·휴식</div><div class="legendItem">🔒 제한 공간</div></div><span class="hint">20 × 14 격자 · 복도는 직접 지우고 다시 그릴 수 있습니다</span></div></div>
+      <div class="underPanel"><div><div class="miniLabel">ROOM DIRECTORY / 현재 층 공간</div><div class="count" id="roomCount"></div></div><div class="miniTools"><button id="duplicateBtn" class="pillBtn">▣ 선택 공간 복제</button><button id="floorJsonBtn" class="pillBtn">↓ 현재 층 JSON</button></div></div><div class="roomchips" id="roomChips"></div>
+      <div class="hintbox" style="margin-top:20px">이 지도는 <strong>실제 사옥의 공개 도면이 아닌 OFFSTAGE 게임용 설계 편집기</strong>입니다. 초기 층별 공간은 실제 소속사 시설 유형을 참고한 게임용 가상 설계이며, 상층부 트레이닝은 OFFSTAGE의 설정입니다. 실제 소속사 층수·평면도를 재현한 것은 아닙니다. 방음·피난·설비 등 건축 세부요건은 도면에 반영되지 않았습니다. 구역은, 배치와 크기는 직접 자유롭게 변경할 수 있어요.</div>
+    </main>
+    <aside class="right"><div class="panelTitle">SELECTED SPACE / 공간 속성</div><div class="selection-card" id="inspector"><p>지도에서 방을 선택해 주세요.</p></div>
+      <div class="statBox"><div class="stat"><div class="value" id="totalRooms">0</div><div class="label">현재 층 공간</div></div><div class="stat"><div class="value" id="accessRooms">0</div><div class="label">OFFSTAGE 이용 가능</div></div></div>
+      <div class="hintbox"><b>조작 방법</b><br>① 왼쪽 장소를 지도 위 칸에 끌어놓으면 이름·용도·분류·권한 배정<br>② 빈 지도 위에 놓으면 칸 자동 생성<br>③ 모바일: 라이브러리에서 장소 선택 → 지도 탭<br>④ 「복도 지우기·그리기」 선택 → 지도 위를 손가락/마우스로 문지르기<br>⑤ 일반 모드에서 방을 드래그 → 위치 이동, 우하단 ↘ → 크기 변경<br>⑥ 장소 미선택 상태에서 방 선택 → 다른 방 더블클릭하면 내용 교환<br><br><span class="key">Ctrl</span> + <span class="key">Z</span> 실행 취소 · <span class="key">Esc</span> 장소 선택 해제</div>
+      <div class="foot"><span>LOCAL AUTOSAVE <span id="saveStatus">●</span></span><span>DESIGN DATA v7.0</span></div>
+    </aside>
+  </div>
+</div><div class="toast" role="status" id="toast"></div>
+<script>
+'use strict';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v7';
+const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
+const gradeLabels=['','소형','중소형','중견','대형','초대형'];
+function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
+function defData(){return [
+ {id:1,label:'소형',description:'지상 3층 + 지하 1층',buildings:[{id:'A',name:'소형 사옥',floors:[
+ spec('3F','경영 · 사무','대표실|management|X|회사 경영 및 면담;운영 사무실|management|X|행정 및 운영 업무;회의실|management|X|내부 회의'),
+ spec('2F','보컬 · 데모','소형 보컬실|training|O|기본 가창 훈련;개인 보컬실|training|O|개인 연습;데모 녹음실|production|O|연습용 가이드 보컬과 데모 녹음;촬영 스튜디오|production|O|사진 및 영상 촬영 겸용'),
+ spec('1F','로비 · 공용 편의','로비|support|O|출입 및 방문 안내;연습생 상담실|support|O|연습생 상담;공용 라운지|social|O|대기와 짧은 휴식;탕비실|social|O|간단한 음료 및 휴식'),
+ spec('B1','지하 안무 · 샤워','대형 안무실|training|O|지하 공용 안무 훈련, 장비를 공동 사용;개인 안무실|training|O|좁은 공간에서 1인 안무 집중 연습;장비 보관실|support|X|음향 장비 및 소품 보관;샤워실|support|O|연습 후 간이 샤워')]}]},
+ {id:2,label:'중소형',description:'지상 6층 · 기능별 최소 분리',buildings:[{id:'A',name:'중소형 독립 사옥',floors:[
+ spec('6F','경영 · 운영','대표실|management|X|경영과 외부 계약 의사결정;운영 사무실|management|X|회계·행정과 연습생 일정 관리;매니지먼트팀 사무실|management|X|데뷔 아티스트 스케줄 조정'),
+ spec('5F','아티스트 지원','대기실|artist|F|데뷔 후 스케줄 대기와 휴식;스타일링룸|artist|F|헤어·메이크업, 의상 보관 및 피팅;아티스트 미팅룸|artist|F|작은 팀 회의와 활동 브리핑'),
+ spec('4F','데모 · 프로듀싱','데모 녹음실|production|O|연습용 가이드 보컬과 데모 녹음;프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합;앨범 녹음실|production|F|정식 발매곡 녹음, 컨트롤룸·방음 부스 포함'),
+ spec('3F','보컬 트레이닝','보컬 레슨실|training|O|트레이너에게 발성·호흡·가창 레슨;개인 보컬실|training|O|시간제로 예약해 개인 보컬 연습'),
+ spec('2F','안무 트레이닝','대형 안무실|training|O|개인·그룹 안무 연습, 월말평가 시 평가장으로 전환;소형 안무실|training|O|동작 보완과 1~2인 연습;락커룸|support|O|탈의 및 개인 물품 보관. 연습 장비는 인접 장비 보관실에서 관리;장비 보관실|support|X|연습 장비 보관'),
+ spec('1F','로비 · 연습생 지원','로비|social|O|출입과 방문 응대;연습생 상담실|support|O|트레이너·매니저와 면담 예약;공용 라운지|social|O|레슨 전후 휴식')]}]},
+ {id:3,label:'중견',description:'지상 10층 + 지하 1층 · 제작·교육 분리',buildings:[{id:'A',name:'중견 사옥',floors:[
+ spec('10F','경영진','대표실|management|X|중장기 사업 및 데뷔 프로젝트 의사결정;회의실|management|X|예산·인력·계약 등 내부 회의'),
+ spec('9F','기획 · 매니지먼트','A&R 사무실|management|X|음악 방향·레퍼토리·데뷔 기획;캐스팅팀 사무실|management|X|선발·계약·레슨 시간표 관리;매니지먼트팀 사무실|management|X|데뷔 후 스케줄과 현장 인력 관리'),
+ spec('8F','아티스트 준비','아티스트 라운지|artist|F|데뷔 멤버 스케줄 사이 휴식;스타일링룸|artist|F|헤어·메이크업, 의상 보관 및 피팅'),
+ spec('7F','사내 콘텐츠 촬영','촬영 스튜디오|artist|F|사진 및 영상 촬영 겸용;라이브 방송실|artist|F|실시간 방송 제작과 스트리밍, 짧은 영상 콘텐츠 촬영'),
+ spec('6F','앨범 녹음 · 장비','앨범 녹음실|production|F|정식 발매곡 녹음, 컨트롤룸·방음 부스 포함;장비 보관실|management|X|방음·음향 시스템 및 녹음 장비 관리'),
+ spec('5F','작곡 · 데모','프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합;데모 녹음실|production|O|연습용 가이드 보컬과 데모 녹음'),
+ spec('4F','퍼포먼스 · 강의','퍼포먼스 스튜디오|evaluation|O|평소 팀 합동 연습, 월말평가 때 이동식 장비로 평가장 전환;강의실|training|O|음악 이론·작사·외국어·무대 표현 및 공통 교육;장비 보관실|management|X|스피커·촬영 장비·이동식 의자 보관'),
+ spec('3F','보컬 트레이닝','개인 보컬실|training|O|방음된 부스에서 가창·발성 개인 연습;보컬 레슨실|training|O|전문 트레이너의 1:1 가창 지도'),
+ spec('2F','안무 트레이닝','대형 안무실|training|O|거울·탄성 바닥을 갖춘 그룹 안무 연습;소형 안무실|training|O|개인 동작 교정과 소규모 연습;락커룸|support|O|환복과 개인 짐 보관'),
+ spec('1F','로비 · 접견','로비|social|O|출입 통제 및 사옥 안내;카페|social|O|연습생·직원 휴식 및 교류;연습생 상담실|support|O|일정·생활·진로 관련 상담'),
+ spec('B1','웰니스 · 체력','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 지도하의 스트레칭·자세 교정·운동 후 회복;락커룸|support|O|운동 후 정비;샤워실|support|O|운동 후 샤워')]}]},
+ {id:4,label:'대형',description:'지상 16층 + 지하 2층 + 옥상 · 상층 트레이닝',buildings:[{id:'A',name:'대형 본사',floors:[
+ spec('RF','루프탑 라운지','루프탑 라운지|artist|F|실내외 휴식과 소규모 사내 교류 행사'),
+ spec('16F','최고경영층','대표실|management|X|최고경영 의사결정;회의실|management|X|전사 경영회의와 승인;프라이빗 미팅룸|management|X|주요 외부 파트너와 비공개 접견·상담'),
+ spec('15F','퍼포먼스 트레이닝','퍼포먼스 스튜디오|training|O|넓은 가변 연습 공간에서 데뷔조 합동 퍼포먼스 연습;장비 보관실|management|X|카메라·스피커·무대 표시물 보관'),
+ spec('14F','안무 트레이닝','대형 안무실|training|O|정규 댄스 클래스 및 팀별 안무 연습;개인 안무실|training|O|예약제 1~3인 집중 연습'),
+ spec('13F','보컬 트레이닝','개인 보컬실|training|O|여러 독립 부스를 시간제 예약하여 개인 가창 연습;보컬 레슨실|training|O|트레이너 1:1 가창·발성 지도'),
+ spec('12F','창작 · 강의','강의실|training|O|음악 이론·작사·외국어·무대 표현 및 공통 교육;프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합'),
+ spec('11F','연습생 전용 지원','연습생 라운지|social|O|연습 사이 식사·휴식·교류;연습생 상담실|support|O|정기 면담과 진로 상담;락커룸|support|O|개인 물품 보관 및 환복'),
+ spec('10F','아티스트 안무 · 퍼포먼스','아티스트 안무실|artist|F|데뷔 그룹의 공식 안무 및 투어 연습;아티스트 퍼포먼스실|artist|F|데뷔 아티스트 무대 리허설 및 퍼포먼스 점검'),
+ spec('9F','앨범 녹음 · 프로듀싱','앨범 녹음실|production|F|정식 발매곡 녹음, 컨트롤룸·방음 부스 포함;아티스트 프로듀싱룸|production|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링'),
+ spec('8F','아티스트 스타일링','스타일링룸|artist|F|헤어·메이크업, 의상 보관 및 피팅;대기실|artist|F|공식 스케줄 전 대기'),
+ spec('7F','콘텐츠 촬영 · 편집','촬영 스튜디오|artist|F|사진 및 영상 촬영 겸용;라이브 방송실|artist|F|실시간 방송 제작과 스트리밍, 짧은 영상 콘텐츠 촬영;영상 편집실|artist|F|영상 편집·색보정·시각효과 등 후반 제작'),
+ spec('6F','아티스트 프로듀싱 · 음악 기획','아티스트 프로듀싱룸|production|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링;회의실|management|X|곡 선정·제작 방향·예산 회의'),
+ spec('5F','레이블 · 아티스트 운영','매니지먼트팀 사무실|management|X|데뷔 아티스트 일정·현장 운영;캐스팅팀 사무실|management|X|연습생 오디션·선발 운영;레이블 운영팀 사무실|management|X|레이블별 프로젝트 관리'),
+ spec('4F','본사 사무 구역','경영기획팀 사무실|management|X|전사 예산·인력 계획;마케팅팀 사무실|management|X|홍보·광고 및 브랜딩;해외사업팀 사무실|management|X|해외 파트너십·유통'),
+ spec('3F','공용 복지','구내식당|social|O|근무자와 연습생의 식사 및 휴식;공용 라운지|social|O|대면 교류와 대기'),
+ spec('2F','신인 교육 · 상담','강의실|training|O|입사 오리엔테이션과 공통 교육;연습생 상담실|support|O|선발 및 입사 관련 상담;프라이빗 미팅룸|management|X|외부 관계자와 비공개 계약 논의'),
+ spec('1F','공개 로비','로비|social|O|사옥 출입·방문 안내;카페|social|O|방문객·연습생 음료와 대기'),
+ spec('B1','피트니스 · 컨디셔닝','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 지도하의 스트레칭·자세 교정·운동 후 회복;락커룸|support|O|운동 전후 환복;샤워실|support|O|운동 후 샤워'),
+ spec('B2','물류 · 설비','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 보관·재고 관리;설비실|management|X|방문 불가 배경 공간 · 전기·공조 등 기계 설비')]}]},
+ {id:5,label:'초대형',description:'본사 + 고층 트레이닝동 + 전문 제작동',buildings:[
+ {id:'A',name:'본사 HQ',floors:[
+ spec('12F','최고경영진','대표실|management|X|복수 레이블 및 회사 전체 경영;회의실|management|X|사업 승인과 의사결정'),
+ spec('11F','경영 지원','경영기획팀 사무실|management|X|재무·인사·조직 운영;법무팀 사무실|management|X|계약과 권리 검토;재무팀 사무실|management|X|사업 회계'),
+ spec('10F','국제사업 · 홍보','해외사업팀 사무실|management|X|글로벌 일정과 파트너 계약;홍보팀 사무실|management|X|보도 대응과 브랜드 홍보;마케팅팀 사무실|management|X|컴백·채널별 프로모션'),
+ spec('9F','레이블 기획','레이블 운영팀 사무실|management|X|레이블별 활동 계획;A&R 사무실|management|X|음반 기획·레퍼토리;매니지먼트팀 사무실|management|X|활동 운영 및 현장 협의'),
+ spec('8F','아티스트 연습','아티스트 미팅룸|artist|F|데뷔 멤버의 활동 일정 공유;스타일링룸|artist|F|헤어·메이크업, 의상 보관 및 피팅;대기실|artist|F|방송 이동 전 대기'),
+ spec('7F','퍼포먼스 트레이닝','아티스트 라운지|artist|F|데뷔 멤버와 팀 휴식;프라이빗 미팅룸|artist|F|외부 파트너 또는 VIP와 비공개 회의'),
+ spec('6F','안무 트레이닝','라이브 방송실|artist|F|공식 소통 방송 제작;콘텐츠 기획실|management|X|촬영 일정과 콘셉트 기획'),
+ spec('5F','캐스팅 · 운영','캐스팅팀 사무실|management|X|신인 선발과 오디션 준비;운영 사무실|management|X|사내 교육·행정 운영'),
+ spec('4F','법무 · 인사','법무팀 사무실|management|X|연습생 계약·보험·행정;인사팀 사무실|management|X|교육 스태프·트레이너 배치'),
+ spec('3F','연습생 상담 · 기초 교육','연습생 상담실|support|O|심리·진로·계약 관련 전문 상담;강의실|training|O|연습생 규정 및 안전교육'),
+ spec('2F','공용 복지','구내식당|social|O|연습생과 직원 식사;공용 라운지|social|O|이동 전후 휴식과 교류'),
+ spec('1F','사옥 로비','로비|social|O|건물별 출입 안내와 외부 방문 응대;카페|social|O|회사 방문객과 연습생 휴식;브랜드 전시 코너|social|O|공개된 회사 활동 소개'),
+ spec('B1','공용 웰니스','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 지도하의 스트레칭·자세 교정·운동 후 회복'),
+ spec('B2','주차 · 물류','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 보관·재고 관리')]},
+ {id:'B',name:'고층 트레이닝 센터',floors:[
+ spec('8F','아티스트 전용 연습','아티스트 퍼포먼스실|artist|F|데뷔 아티스트 무대 리허설 및 퍼포먼스 점검;아티스트 보컬실|artist|F|콘서트·컴백 보컬 연습;아티스트 안무실|artist|F|데뷔 아티스트 전용 단체 안무 연습'),
+ spec('7F','퍼포먼스 트레이닝','퍼포먼스 스튜디오|evaluation|O|대규모 합동 리허설 및 공식 실기 평가;장비 보관실|management|X|이동식 조명과 장비 보관'),
+ spec('6F','안무 트레이닝','대형 안무실|training|O|정규 퍼포먼스·그룹 안무 수업;대형 안무실|training|O|팀별 연습과 데뷔조 합동훈련;소형 안무실|training|O|소규모 그룹의 보조 안무 연습'),
+ spec('5F','보컬 트레이닝','보컬 레슨실|training|O|전임 보컬 트레이너 1:1 지도;개인 보컬실|training|O|방음 개인실 예약 연습;소형 보컬실|training|O|팀별 소규모 보컬 연습'),
+ spec('4F','창작 · 데모','프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합;데모 녹음실|production|O|연습용 가이드 보컬과 데모 녹음'),
+ spec('3F','기초 교육 · 개별 훈련','강의실|training|O|음악 이론·작사·외국어·무대 표현 및 공통 교육;소형 안무실|training|O|개인·소규모 안무 동작 연습'),
+ spec('2F','연습생 케어','연습생 라운지|social|O|레슨 사이 식사·휴식·교류;연습생 상담실|support|O|건강·진로·심리 상담 예약;락커룸|support|O|개인 짐 보관과 환복'),
+ spec('1F','센터 출입','로비|support|O|시설 입장·수업 안내;공용 라운지|social|O|대기와 휴식'),
+ spec('B1','체력 · 회복','피트니스 센터|training|O|체력 단련과 기초 운동;컨디셔닝룸|support|O|전문 지도하의 스트레칭·자세 교정·운동 후 회복;샤워실|support|O|운동 후 정비')]},
+ {id:'C',name:'전문 제작 센터',floors:[
+ spec('6F','안무 트레이닝','아티스트 프로듀싱룸|artist|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링;아티스트 미팅룸|artist|F|발매 프로젝트 및 편곡 조율'),
+ spec('5F','음원 프로듀싱 · 후반 제작','아티스트 프로듀싱룸|artist|F|데뷔 아티스트의 편곡·믹싱·마스터링 등 음원 후반 작업;프로듀싱룸|management|X|전문 엔지니어의 음원 후반 작업'),
+ spec('4F','앨범 녹음','앨범 녹음실|production|F|정식 발매곡 보컬·악기 녹음 및 컨트롤룸 통합'),
+ spec('3F','영상 편집 · 장비','영상 편집실|artist|F|영상 편집·색보정·시각효과 등 후반 제작;장비 보관실|management|X|촬영 장비 보관'),
+ spec('2F','연습생 데모 제작','데모 녹음실|production|O|연습용 가이드 보컬과 데모 녹음;프로듀싱룸|production|O|작곡·편곡·음원 편집·믹싱·마스터링 통합'),
+ spec('1F','간이 콘텐츠 촬영','촬영 스튜디오|production|O|사진 및 영상 촬영 겸용;촬영 스튜디오|artist|F|사진 및 영상 촬영 겸용;로비|support|O|촬영실 입장·예약 확인'),
+ spec('B1','설비 · 물류','장비 보관실|management|X|조명·마이크 등 장비 보관;물류실|management|X|물품 반입·반출 및 보관·재고 관리')]} 
+ ]}
+ ];}
+const GRADE_NOTES={
+1:'공간을 겸용하고 설비는 최소한으로 운영해요. B1 안무실과 3F 대표실이 소형 사옥의 대표적인 격차입니다.',
+2:'보컬·안무실을 분리하지만 평가와 제작은 기존 방을 예약·전환하여 사용합니다.',
+3:'교육·음악 작업·데뷔 제작 공간을 구분하되, 월말평가는 4층 퍼포먼스 스튜디오에서 진행합니다.',
+4:'상층부 11~15층은 연습생 트레이닝, 7~10층은 FINALSTAGE 전용 제작·아티스트, 4~6층은 직원 업무 및 프로듀싱입니다.',
+5:'훈련은 B동 고층, 데뷔 음반 녹음과 제작은 C동, 운영·매니지먼트는 A동에 분리합니다. 건물 간 이동이 필요해집니다.'};
+const FLOOR_NOTES={
+'3:A:4F':'중견 회사에 상설 평가홀·심사 대기실을 따로 두는 대신, 퍼포먼스 스튜디오를 합동 연습과 월말평가에 겸용합니다.',
+'3:A:3F':'보컬은 3F, 안무는 2F라는 기존 수정 사항을 유지했습니다. 방음이 필요한 보컬 부스를 묶었습니다.',
+'3:A:2F':'큰 안무 공간과 보조 스튜디오를 인접 배치하고 탈의·수납 기능을 붙였습니다.',
+'4:A:15F':'대형부터 상층부 트레이닝 구역입니다. 고층 대형 홀은 층고·소음 차단을 확보했다는 게임 내 가정입니다.',
+'4:A:14F':'안무실에서 코칭과 영상 피드백을 함께 진행합니다.',
+'4:A:13F':'방음이 필요한 보컬 부스·레슨실·보컬 레슨과 개인 부스를 한 층에 묶었습니다.',
+'4:A:12F':'작사·랩·외국어 등 정규 교육과 창작 실습을 연결한 층입니다.',
+'5:B:7F':'대규모 리허설과 공식 실기 평가를 함께 운영하는 특수 시설입니다.',
+'5:C:4F':'발매곡을 녹음하는 전용 방음 시설입니다. 연습생 데모는 2F로 분리합니다.'};
+function layout(rooms){const n=rooms.length;if(!n)return;let t=n<=3?Math.min(n,2):Math.ceil(n/2),b=n-t;if(n>6){t=Math.ceil(n/2);b=n-t;}const row=(from,len,y,h)=>{if(!len)return;const gap=.5,width=(16-(len-1)*gap)/len;for(let i=0;i<len;i++)Object.assign(rooms[from+i],{x:Math.round((1+i*(width+gap))*2)/2,y,w:Math.round(width*2)/2,h});};row(0,t,1,5);row(t,b,9,4)}
+function fresh(){const grades=defData();let seq=1;grades.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>{f.rooms.forEach(r=>r.id='r'+seq++);layout(f.rooms)})));return grades}
+const defaults=fresh();let data,gradeId=3,buildingId='A',floorId='4F',stage='edit',selectedId=null,undo=[],redo=[],drag=null,dirtySinceSave=false;
+const $=id=>document.getElementById(id);const deep=x=>JSON.parse(JSON.stringify(x));const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function getGrade(){return data.find(g=>g.id===gradeId)}function getBuilding(){return getGrade().buildings.find(b=>b.id===buildingId)}function getFloor(){return getBuilding().floors.find(f=>f.id===floorId)}function getRoom(){return getFloor().rooms.find(r=>r.id===selectedId)}
+function defaultRoom(f){return f.rooms[0]?.id??null}
+function locateFirst(){const g=getGrade();if(!g.buildings.some(b=>b.id===buildingId))buildingId=g.buildings[0].id;const b=getBuilding();if(!b.floors.some(f=>f.id===floorId))floorId=b.floors.find(f=>f.id==='3F')?.id||b.floors[0].id;if(!getRoom())selectedId=defaultRoom(getFloor())}
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify({data,gradeId,buildingId,floorId,stage,selectedId}));$('saveStatus').textContent='● 저장됨';}catch(e){$('saveStatus').textContent='저장 실패';toast('브라우저 자동 저장을 사용할 수 없습니다. JSON으로 저장해 주세요.')}}
+function legacyGrade2IsUntouched(g){
+ if(!g||g.buildings?.length!==1||g.buildings[0].name!=='독립 사옥')return false;
+ const expected=[
+ spec('6F','경영 · 매니지먼트','대표실|management|X|회사 경영;운영팀|management|X|행정 및 운영;매니저 사무실|management|X|아티스트 매니지먼트'),
+ spec('5F','아티스트 지원','아티스트 대기실|artist|F|데뷔 아티스트 대기;헤어·메이크업실|artist|F|방송 준비;의상실|artist|F|활동 의상 보관'),
+ spec('4F','음악 제작','데모 녹음실|production|O|연습생 데모 녹음;작곡실|production|O|창작 실습;앨범 녹음실|production|F|정식 앨범 녹음'),
+ spec('3F','보컬 트레이닝','보컬 연습실|training|O|가창 훈련;개인 연습 부스|training|O|개인 보컬 연습;레슨실|training|O|전문 보컬 수업'),
+ spec('2F','퍼포먼스 트레이닝','안무 연습실|training|O|안무 훈련;합동 연습실|training|O|팀 단위 연습;평가 공간|evaluation|O|실기 평가'),
+ spec('1F','로비 · 연습생 지원','로비|social|O|사옥 출입;상담실|support|O|연습생 상담;라운지|social|O|휴식 및 교류;행정실|management|X|직원 행정 업무')];
+ expected.forEach(f=>layout(f.rooms));const old=g.buildings[0].floors;
+ return old.length===expected.length && old.every((f,i)=>f.id===expected[i].id && f.title===expected[i].title && f.rooms.length===expected[i].rooms.length && f.rooms.every((r,j)=>['name','category','access','purpose','x','y','w','h'].every(k=>r[k]===expected[i].rooms[j][k])));
+}
+function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
+function load(){
+ // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+  try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
+   data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','offstage','finalstage'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
+  }catch(e){}
+ }
+ data=deep(defaults);
+ // v4 복원은 기존의 '이전 편집 복원' 버튼을 이용할 수 있습니다.
+}
+
+function validate(x){return Array.isArray(x)&&x.length===5&&x.every(g=>Number.isInteger(g.id)&&Array.isArray(g.buildings)&&g.buildings.every(b=>Array.isArray(b.floors)&&b.floors.every(f=>typeof f.id==='string'&&Array.isArray(f.rooms)&&f.rooms.every(r=>typeof r.id==='string'&&typeof r.name==='string'&&['O','F','X'].includes(r.access)&&['training','production','evaluation','support','social','artist','management'].includes(r.category)&&['x','y','w','h'].every(k=>Number.isFinite(r[k]))))))}
+function snapshot(){return deep({data,gradeId,buildingId,floorId,stage,selectedId})}
+function historyPush(before){undo.push(before);if(undo.length>70)undo.shift();redo=[];updateUndo();save()}
+function historyAction(stack,other){if(!stack.length)return;swapTap=null;other.push(snapshot());const s=stack.pop();({data,gradeId,buildingId,floorId,stage,selectedId}=deep(s));locateFirst();renderAll();save();}
+function updateUndo(){$('undoBtn').disabled=undo.length===0;$('redoBtn').disabled=redo.length===0}
+let toastTimer;function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2400)}
+function accessible(r){return stage==='edit'||((r.interactive!==false)&& (r.access==='O'||(stage==='finalstage'&&r.access==='F')))}
+function roomLock(r){if(stage!=='edit'&&r.interactive===false)return '<div class="lockOverlay">건물 배경 · 방문 불가</div>';return accessible(r)?'':`<div class="lockOverlay">🔒 ${r.access==='X'?'직원 전용':'FINALSTAGE'}</div>`}
+function findCollision(r,rmList,id=r.id){if(r.x<0||r.y<0||r.x+r.w>COLS||r.y+r.h>ROWS)return true;if(r.x<20&&r.x+r.w>18&&r.y<6&&r.y+r.h>1)return true;return rmList.some(o=>o.id!==id&&r.x<o.x+o.w-.05&&r.x+r.w>o.x+.05&&r.y<o.y+o.h-.05&&r.y+r.h>o.y+.05)}
+function renderSide(){const g=getGrade(),b=getBuilding(),f=getFloor();$('gradeList').innerHTML=data.map(x=>`<button class="gradeBtn ${x.id===gradeId?'active':''}" data-grade="${x.id}"><span class="n">${String(x.id).padStart(2,'0')}</span><span><span class="mainLabel">${x.label}</span><span class="tiny">${x.description}</span></span></button>`).join('');$('buildingTabs').innerHTML=g.buildings.map(x=>`<button class="buildingTab ${x.id===buildingId?'active':''}" data-building="${esc(x.id)}">${esc(x.id)}동 · ${esc(x.name)}</button>`).join('');$('floorList').innerHTML=b.floors.map(x=>`<button class="floorBtn ${x.id===floorId?'active':''}" data-floor="${esc(x.id)}"><b>${esc(x.id)}</b><span>${esc(x.title)}</span></button>`).join('');$('floorCount').textContent=`${b.floors.length}개 층`;$('locationPath').textContent=`GRADE ${String(gradeId).padStart(2,'0')} / ${b.id} BUILDING / FLOOR PLANNER`;$('floorTitle').innerHTML=`<em>${esc(f.id)}</em> · ${esc(f.title)}`;$('floorSubtitle').textContent=`${g.label} 소속사 / ${b.name} · 공간을 드래그해서 원하는 위치에 배치하세요.`;$('floorNote').textContent=(FLOOR_NOTES[`${gradeId}:${buildingId}:${floorId}`]||GRADE_NOTES[gradeId]);$('stamp').textContent=f.id;document.querySelectorAll('[data-stage]').forEach(x=>x.classList.toggle('active',x.dataset.stage===stage))}
+function renderBoard(){const f=getFloor();renderCorridor();const el=$('roomLayer');el.innerHTML=f.rooms.map((r,i)=>{const [fill,edge,type]=PALETTE[r.category];const left=100*r.x/COLS,top=100*r.y/ROWS,w=100*r.w/COLS,h=100*r.h/ROWS;return `<div class="room ${selectedId===r.id?'sel':''} ${r.interactive===false?'background-only':''}" data-room="${esc(r.id)}" style="left:${left}%;top:${top}%;width:${w}%;height:${h}%;--fill:${fill};--edge:${edge}" title="${stage!=='edit'&&r.interactive===false?'배경 공간 · 방문 불가':('드래그해서 이동: '+esc(r.name))}"><div class="room-no">ROOM ${String(i+1).padStart(2,'0')} · ${r.access}</div><div class="roomname">${esc(r.name)}</div><div class="role">${esc(type)} · ${r.access==='O'?'공용':r.access==='F'?'데뷔 후':'직원'}</div>${roomLock(r)}<div class="grip" data-grip="1" title="끌어서 크기 조절">↘</div></div>`}).join('');$('roomCount').textContent=`${f.rooms.length}개 장소 · 선택한 방은 아래에서 상세 수정 가능`;$('roomChips').innerHTML=f.rooms.map(r=>`<button class="chip ${r.id===selectedId?'selected':''} ${r.access!=='O'?'locked':''}" data-select="${esc(r.id)}">${r.access!=='O'?'🔒 ':''}${esc(r.name)}</button>`).join('');$('totalRooms').textContent=f.rooms.length;$('accessRooms').textContent=f.rooms.filter(r=>r.access==='O').length;}
+function renderInspector(){const r=getRoom();if(!r){$('inspector').innerHTML='<p>공간을 선택하거나 새로 추가해 주세요.</p>';return}const movingOptions=getGrade().buildings.flatMap(b=>b.floors.map(f=>({value:b.id+'::'+f.id,label:b.id+'동 / '+f.id+' '+f.title})));$('inspector').innerHTML=`<h3>${esc(r.name)}</h3><p>드래그 이동 · 모서리 크기 변경 · 다른 방 두 번 클릭하면 내용 교환</p><div class="inspectorGrid"><label class="field"><span>공간 이름</span><input id="fieldName" maxlength="48" value="${esc(r.name)}"></label><label class="field"><span>용도 / 분류</span><select id="fieldCat">${Object.keys(PALETTE).map(k=>`<option value="${k}" ${k===r.category?'selected':''}>${PALETTE[k][2]}</option>`).join('')}</select></label><label class="field"><span>출입 권한</span><select id="fieldAccess"><option value="O" ${r.access==='O'?'selected':''}>O · OFFSTAGE부터</option><option value="F" ${r.access==='F'?'selected':''}>F · FINALSTAGE 전용</option><option value="X" ${r.access==='X'?'selected':''}>X · 직원 전용</option></select></label><label class="field"><span>방을 다른 층으로 이동</span><select class="moveSelect" id="moveTo"><option value="${buildingId}::${floorId}">현재 층 유지</option>${movingOptions.filter(o=>o.value!==buildingId+'::'+floorId).map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('')}</select></label><label class="field" style="grid-column:span 2"><span>장소의 실제 용도 / 게임 내 기능</span><textarea id="fieldPurpose" maxlength="300">${esc(r.purpose||'')}</textarea></label></div><div class="dim-title">위치 · 크기 (칸)</div><div class="coordgrid">${['x','y','w','h'].map(k=>`<label class="coord"><span>${{x:'X',y:'Y',w:'폭 W',h:'높이 H'}[k]}</span><input data-geom="${k}" type="number" min="${k==='w'||k==='h'?'1':'0'}" max="20" step="0.5" value="${r[k]}"></label>`).join('')}</div><div class="actionRow" style="margin-top:17px"><button id="delRoom" class="pillBtn danger">− 선택 공간 삭제</button></div><div class="hintbox">${r.access==='O'?'✓ 두 게임에서 접근 가능':r.access==='F'?'🔒 OFFSTAGE에서 잠금 · FINALSTAGE에서 해금':'🔒 직원 전용 (두 게임 모두 출입 불가)'}</div>`}
+function renderAll(){locateFirst();renderSide();renderBoard();renderInspector();renderLibrary();updateUndo();updateTools()}
+function selectRoom(id){swapTap=null;selectedId=id;renderBoard();renderInspector();save()}
+
+// Room types come from all five original agency layouts AND imported/edited rooms.
+// Entries sharing a name and access permission reuse one template, not one physical room.
+const categoryOrder=['training','production','evaluation','support','social','artist','management'];
+const standardPurpose={
+ '대형 안무실':'여러 명이 함께 진행하는 안무·단체 퍼포먼스 연습',
+ '소형 안무실':'소규모 그룹의 동작 연습과 퍼포먼스 교정',
+ '개인 안무실':'개인 안무 연습과 집중 훈련',
+ '대형 보컬실':'여러 명이 함께 보컬 합동 연습을 진행하는 공간',
+ '소형 보컬실':'소규모 보컬 연습과 발성 훈련',
+ '개인 보컬실':'방음된 개인 연습 공간에서 가창·발성 훈련',
+ '보컬 레슨실':'트레이너가 진행하는 보컬 레슨과 개인 피드백',
+ '데모 녹음실':'가이드 보컬과 연습용 데모 음원 녹음',
+ '앨범 녹음실':'공식 발매 음원 녹음, 컨트롤룸과 방음 부스 포함',
+ '프로듀싱룸':'작곡·편곡·음원 편집·믹싱·마스터링',
+ '아티스트 프로듀싱룸':'데뷔 아티스트 전용 작곡·편곡·음원 편집·믹싱·마스터링',
+ '퍼포먼스 스튜디오':'합동 리허설·퍼포먼스 코칭·월말평가·소규모 쇼케이스',
+ '아티스트 안무실':'데뷔 아티스트의 정규 안무 연습',
+ '아티스트 퍼포먼스실':'공연 리허설 및 무대 동선 점검',
+ '아티스트 보컬실':'데뷔 아티스트의 보컬 연습과 피드백',
+ '스타일링룸':'헤어·메이크업, 의상 피팅 및 보관',
+ '촬영 스튜디오':'사진·영상 촬영',
+ '라이브 방송실':'실시간 방송 및 스트리밍 진행',
+ '영상 편집실':'영상 편집·색보정·시각효과 등 후반 제작',
+ '연습생 상담실':'연습생 진로·계약·이적·생활 관련 상담',
+ '아티스트 상담실':'아티스트 활동·계약·진로 관련 상담',
+ '연습생 라운지':'연습생 전용 휴식·교류',
+ '아티스트 라운지':'데뷔 아티스트 전용 휴식·교류',
+ '공용 라운지':'이용자들의 휴식과 교류',
+ '대기실':'촬영·공연·평가 등 일정 전 대기',
+ '락커룸':'탈의 및 개인 물품 보관',
+ '샤워실':'운동·연습 후 샤워',
+ '피트니스 센터':'체력 단련과 기초 운동',
+ '컨디셔닝룸':'전문 지도 아래 스트레칭·자세 교정·운동 후 회복',
+ '장비 보관실':'연습·촬영·음향 장비와 소품 보관',
+ '물류실':'물품 반입·반출·재고 관리',
+ '로비':'사옥 출입·방문 안내, 안내 데스크 포함',
+ '강의실':'외국어·음악 이론·작사·무대 표현 등 교육',
+ '루프탑 라운지':'옥상 실내외 휴식과 소규모 사내 교류',
+ '프라이빗 미팅룸':'외부 관계자와의 비공개 업무 미팅',
+ '회의실':'사내 업무 회의 및 의사결정',
+ '아티스트 미팅룸':'데뷔 아티스트의 활동 기획·프로젝트 미팅',
+ '카페':'음료·간식 구매와 휴식',
+ '구내식당':'직원·연습생·아티스트 식사',
+ '탕비실':'간단한 음료·간식 보관과 음식 준비',
+ '매점':'포장 식품·생필품 판매',
+ '브랜드 전시 코너':'소속사·아티스트의 활동과 성과 전시',
+ '주차장':'건물 주차 구획 (게임 내 방문 불가)',
+ '설비실':'건물 설비 유지·관리 (게임 내 방문 불가)'
+};
+const categoryDisplay={training:'연습 공간',production:'음악·콘텐츠 제작',evaluation:'평가·퍼포먼스',support:'지원·건강',social:'교류·생활',artist:'아티스트 전용',management:'경영·사무'};
+let catalog=[],chosenTemplate=null,mapTool='select',catalogDrag=null,painting=null,suppressLibraryClick=false;
+function buildCatalog(){
+ const seen=new Set(),entries=[];
+ for(const source of [defaults,data])for(const g of source)for(const b of g.buildings)for(const f of b.floors)for(const r of f.rooms){
+  const key=[r.name,r.category,r.access].join('|');if(seen.has(key))continue;seen.add(key);
+  entries.push({name:r.name,category:r.category,access:r.access,purpose:standardPurpose[r.name]||r.purpose||'',interactive:r.interactive!==false});
+ }
+ entries.sort((a,b)=>categoryOrder.indexOf(a.category)-categoryOrder.indexOf(b.category)||a.name.localeCompare(b.name,'ko')||a.access.localeCompare(b.access));
+ catalog=entries;
+}
+function renderLibrary(){
+ buildCatalog();const q=$('catalogSearch').value.trim().toLowerCase(),filter=$('catalogFilter').value;
+ const visible=catalog.map((x,i)=>({...x,index:i})).filter(x=>(filter==='all'||x.category===filter)&&(!q||(x.name+' '+x.purpose).toLowerCase().includes(q)));
+ $('catalogCount').textContent=`${visible.length}/${catalog.length}개`;
+ let last='';$('catalogList').innerHTML=visible.map(x=>{
+  const [fill,edge]=PALETTE[x.category],group=x.category;
+  const h=group!==last?`<div class="catalogGroup">${categoryDisplay[group]}</div>`:'';last=group;
+  return h+`<button type="button" class="catalogItem ${chosenTemplate===x.name+'|'+x.category+'|'+x.access?'chosen':''}" data-library="${x.index}" aria-label="${esc(x.name)} · ${esc(x.purpose)}" title="${esc(x.purpose)}"><span class="sample" style="--sample:${fill};--sample-edge:${edge}"></span><span style="min-width:0;flex:1"><strong>${esc(x.name)}</strong><small>${esc(x.purpose)}</small></span><span class="catalogTag">${x.access}</span></button>`;
+ }).join('')||'<p style="font-size:11px;color:#999;padding:8px">일치하는 장소가 없어요.</p>';
+ const cur=catalog.find(x=>x.name+'|'+x.category+'|'+x.access===chosenTemplate);
+ $('catalogSelection').textContent=cur?`배정 대기: ${cur.name} (${cur.access}) · 칸을 누르거나 끌어놓으세요.`:'장소를 끌어놓거나 탭해서 선택하세요.';
+}
+$('catalogSearch').addEventListener('input',renderLibrary);
+$('catalogFilter').addEventListener('change',renderLibrary);
+$('clearCatalogBtn').onclick=()=>{chosenTemplate=null;renderLibrary();toast('장소 배정을 해제했어요. 방을 다시 이동할 수 있어요.')};
+$('catalogList').addEventListener('click',e=>{
+ const btn=e.target.closest('[data-library]');if(!btn||suppressLibraryClick)return;
+ const item=catalog[Number(btn.dataset.library)];if(!item)return;
+ chosenTemplate=item.name+'|'+item.category+'|'+item.access;mapTool='select';updateTools();renderLibrary();toast(`「${item.name}」 선택됨. 지도 칸을 누르면 배정돼요.`);
+});
+function defaultCorridor(){return Array.from({length:18*2},(_,i)=>`${i%18},${7+Math.floor(i/18)}`)}
+function corridorSet(f){if(!Array.isArray(f.corridor))f.corridor=defaultCorridor();return new Set(f.corridor)}
+function roomCovers(r,x,y){return r.x<x+1&&r.x+r.w>x&&r.y<y+1&&r.y+r.h>y}
+function eraseCorridorUnder(r,f){const set=corridorSet(f);for(const item of [...set]){const [x,y]=item.split(',').map(Number);if(roomCovers(r,x,y))set.delete(item)}f.corridor=[...set]}
+function renderCorridor(){const f=getFloor(),set=corridorSet(f);
+ $('corridorLayer').innerHTML=[...set].map(k=>{const [x,y]=k.split(',').map(Number);if(f.rooms.some(r=>roomCovers(r,x,y)))return '';return `<div class="corridorCell" style="left:${x*100/COLS}%;top:${y*100/ROWS}%;width:${100/COLS}%;height:${100/ROWS}%"></div>`}).join('')}
+function updateTools(){document.querySelectorAll('[data-map-tool]').forEach(b=>b.classList.toggle('active',b.dataset.mapTool===mapTool));$('board').classList.toggle('painting',mapTool!=='select');$('toolTip').textContent=mapTool==='corridor-add'?'빈 격자를 문지르면 그 부분에 복도가 그려져요.':mapTool==='corridor-erase'?'복도를 문지르면 지워져요. 복도 끝에 방을 자유롭게 배치하세요.':chosenTemplate?'장소 선택 중: 원하는 방이나 빈 칸을 누르면 배정돼요.':'왼쪽 목록을 방에 끌어놓으면 내용을 바꾸고, 빈 칸에 놓으면 방이 생겨요.'}
+document.querySelector('#corridorTools').addEventListener('click',e=>{const btn=e.target.closest('[data-map-tool]');if(!btn)return;if(stage!=='edit'){stage='edit';renderSide()}mapTool=btn.dataset.mapTool;chosenTemplate=null;renderLibrary();updateTools();swapTap=null});
+$('clearCorridorBtn').onclick=()=>{if(stage!=='edit')stage='edit';if(!corridorSet(getFloor()).size)return;if(!confirm('현재 층의 복도를 모두 지울까요? 실행 취소로 복구할 수 있어요.'))return;mutate(()=>{getFloor().corridor=[]});toast('현재 층 복도를 모두 제거했어요.')};
+function mapCell(cx,cy){const rect=board.getBoundingClientRect();if(cx<rect.left||cx>rect.right||cy<rect.top||cy>rect.bottom)return null;return {x:clamp(Math.floor((cx-rect.left)*COLS/rect.width),0,COLS-1),y:clamp(Math.floor((cy-rect.top)*ROWS/rect.height),0,ROWS-1)}}
+function paintCell(cx,cy){const cell=mapCell(cx,cy);if(!cell)return;const f=getFloor(),key=`${cell.x},${cell.y}`,set=corridorSet(f),was=set.has(key),add=mapTool==='corridor-add';if(was===add)return;
+ if(add&&f.rooms.some(r=>roomCovers(r,cell.x,cell.y)))return;
+ if(add)set.add(key);else set.delete(key);f.corridor=[...set];painting.changed=true;renderCorridor();}
+function currentCatalog(){return catalog.find(x=>x.name+'|'+x.category+'|'+x.access===chosenTemplate)}
+function assignTemplate(item,x,y,roomId=null){if(stage!=='edit')stage='edit';const f=getFloor(),target=roomId?f.rooms.find(r=>r.id===roomId):null;
+ if(target){mutate(()=>{Object.assign(target,{name:item.name,purpose:item.purpose,category:item.category,access:item.access,interactive:item.interactive});selectedId=target.id;eraseCorridorUnder(target,f)});toast(`「${target.name}」을(를) 선택 칸에 배정했어요.`);return true}
+ let r=null;
+ for(const [w,h] of [[3,2],[2,2],[2,1],[1,1]]){
+  // 지정한 칸에 반드시 포함되도록 위치를 계산하고 가능한 크기부터 시도합니다.
+  const pos={x:clamp(snap(x-w/2),0,COLS-w),y:clamp(snap(y-h/2),0,ROWS-h)};
+  const candidate={id:nextId(),...pos,w,h,name:item.name,purpose:item.purpose,category:item.category,access:item.access,interactive:item.interactive};
+  if(!findCollision(candidate,f.rooms)){r=candidate;break}
+ }
+ if(!r){toast('이 격자에는 새 칸을 놓을 수 없어요. 다른 공간을 선택해 주세요.');return false}
+ mutate(()=>{f.rooms.push(r);eraseCorridorUnder(r,f);selectedId=r.id});toast(`「${r.name}」 새 칸을 배치했어요.`);return true;
+}
+function dropTemplate(item,cx,cy){const pt=mapCell(cx,cy);if(!pt){toast('지도 안으로 끌어놓아 주세요.');return false}
+ const hit=document.elementFromPoint(cx,cy)?.closest('[data-room]');const target=hit&&board.contains(hit)?hit.dataset.room:null;
+ return assignTemplate(item,pt.x,pt.y,target)}
+function clearDropTarget(){board.classList.remove('dropTarget');board.querySelectorAll('.dropHover').forEach(el=>el.classList.remove('dropHover'))}
+function markDropTarget(cx,cy){clearDropTarget();if(!mapCell(cx,cy))return;board.classList.add('dropTarget');const el=document.elementFromPoint(cx,cy)?.closest('[data-room]');if(el&&board.contains(el))el.classList.add('dropHover')}
+// Native drag-and-drop does not work reliably on mobile, so use Pointer Events for both desktop and touch.
+$('catalogList').addEventListener('pointerdown',e=>{
+ const button=e.target.closest('[data-library]');if(!button||e.button!==0)return;
+ const item=catalog[Number(button.dataset.library)];if(!item)return;e.preventDefault();
+ catalogDrag={pointer:e.pointerId,item,button,sx:e.clientX,sy:e.clientY,moved:false,ghost:null};
+ button.setPointerCapture(e.pointerId);
+});
+$('catalogList').addEventListener('pointermove',e=>{
+ const d=catalogDrag;if(!d||d.pointer!==e.pointerId)return;
+ if(!d.moved&&Math.hypot(e.clientX-d.sx,e.clientY-d.sy)>7){d.moved=true;d.ghost=document.createElement('div');d.ghost.className='dragGhost';d.ghost.textContent='✥ '+d.item.name;document.body.append(d.ghost)}
+ if(d.moved){d.ghost.style.transform=`translate(${e.clientX+12}px,${e.clientY+12}px)`;markDropTarget(e.clientX,e.clientY)}
+});
+function endLibraryDrag(e){const d=catalogDrag;if(!d||d.pointer!==e.pointerId)return;
+ const moved=d.moved;d.ghost?.remove();clearDropTarget();catalogDrag=null;
+ if(e.type==='pointerup'&&moved){suppressLibraryClick=true;setTimeout(()=>suppressLibraryClick=false,80);chosenTemplate=d.item.name+'|'+d.item.category+'|'+d.item.access;mapTool='select';updateTools();dropTemplate(d.item,e.clientX,e.clientY);renderLibrary()}
+ else if(e.type==='pointerup'){chosenTemplate=d.item.name+'|'+d.item.category+'|'+d.item.access;mapTool='select';updateTools();renderLibrary();toast(`「${d.item.name}」 선택됨. 지도에 탭해서 배정하세요.`)}
+}
+$('catalogList').addEventListener('pointerup',endLibraryDrag);
+$('catalogList').addEventListener('pointercancel',endLibraryDrag);
+
+$('gradeList').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-grade]');if(!b)return;gradeId=+b.dataset.grade;buildingId='A';floorId=getGrade().buildings[0].floors.find(f=>f.id==='3F')?.id||getGrade().buildings[0].floors[0].id;selectedId=null;renderAll();save()});
+$('buildingTabs').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-building]');if(!b)return;buildingId=b.dataset.building;floorId=getBuilding().floors.find(f=>f.id==='3F')?.id||getBuilding().floors[0].id;selectedId=null;renderAll();save()});
+$('floorList').addEventListener('click',e=>{chosenTemplate=null;swapTap=null;const b=e.target.closest('[data-floor]');if(!b)return;floorId=b.dataset.floor;selectedId=null;renderAll();save()});
+document.querySelector('.stageRow').addEventListener('click',e=>{swapTap=null;const b=e.target.closest('[data-stage]');if(!b)return;stage=b.dataset.stage;mapTool='select';chosenTemplate=null;renderSide();renderBoard();renderLibrary();updateTools();save()});
+$('roomChips').addEventListener('click',e=>{const b=e.target.closest('[data-select]');if(b)selectRoom(b.dataset.select)});
+// Pointer-driven drag & resize. Works with mouse, stylus and touch.
+const board=$('board');let pixelUnit=1,swapTap=null;
+const snap=x=>Math.round(x*2)/2;const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+// 선택한 방과 다른 방의 '배정 내용'만 교환합니다. 칸의 ID·좌표·크기는 고정합니다.
+function swapRoomContents(aId,bId){
+ const f=getFloor(),a=f.rooms.find(r=>r.id===aId),b=f.rooms.find(r=>r.id===bId);
+ if(stage!=='edit'||!a||!b||a===b)return false;
+ const aName=a.name,bName=b.name,keep=new Set(['id','x','y','w','h']);
+ const aContent=Object.fromEntries(Object.entries(a).filter(([k])=>!keep.has(k)));
+ const bContent=Object.fromEntries(Object.entries(b).filter(([k])=>!keep.has(k)));
+ mutate(()=>{
+  for(const key of Object.keys(aContent))delete a[key];
+  for(const key of Object.keys(bContent))delete b[key];
+  Object.assign(a,bContent);Object.assign(b,aContent);
+  selectedId=bId;
+ });
+ toast(`「${aName}」 ↔ 「${bName}」 배정 내용을 교환했어요. Ctrl+Z로 취소 가능`);
+ return true;
+}
+board.addEventListener('pointerdown',e=>{
+  if(e.button>0)return;
+  if(stage!=='edit'&&mapTool==='select'){const r=e.target.closest('[data-room]');if(r)selectRoom(r.dataset.room);return;}
+  if(mapTool!=='select'){
+   e.preventDefault();painting={pointer:e.pointerId,before:snapshot(),changed:false};paintCell(e.clientX,e.clientY);board.setPointerCapture(e.pointerId);return;
+  }
+  const assigned=currentCatalog();
+  if(assigned){e.preventDefault();const cell=mapCell(e.clientX,e.clientY),el=e.target.closest('[data-room]');if(cell)assignTemplate(assigned,cell.x,cell.y,el?.dataset.room||null);return;}
+  const el=e.target.closest('[data-room]');if(!el)return;
+ const r=getFloor().rooms.find(x=>x.id===el.dataset.room);
+ if(!r||stage!=='edit'&&r.interactive===false)return;
+ e.preventDefault();
+ const fromSelectedId=selectedId;
+ if(selectedId!==r.id){selectedId=r.id;renderInspector();board.querySelectorAll('.room').forEach(x=>x.classList.toggle('sel',x.dataset.room===r.id));}
+ const bb=board.getBoundingClientRect();pixelUnit=bb.width/COLS;
+ drag={pointer:e.pointerId,id:r.id,mode:e.target.closest('[data-grip]')?'resize':'move',startX:e.clientX,startY:e.clientY,original:{x:r.x,y:r.y,w:r.w,h:r.h},before:snapshot(),el,fromSelectedId,moved:false};
+ el.classList.add('dragging');board.setPointerCapture(e.pointerId);
+});
+board.addEventListener('pointermove',e=>{if(painting&&e.pointerId===painting.pointer){paintCell(e.clientX,e.clientY);return}if(!drag||e.pointerId!==drag.pointer)return;if(Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)>8)drag.moved=true;const r=getFloor().rooms.find(x=>x.id===drag.id);if(!r)return;const bb=board.getBoundingClientRect();const dx=snap((e.clientX-drag.startX)*COLS/bb.width),dy=snap((e.clientY-drag.startY)*ROWS/bb.height);if(drag.mode==='resize'){r.w=clamp(drag.original.w+dx,1,COLS-r.x);r.h=clamp(drag.original.h+dy,1,ROWS-r.y)}else{r.x=clamp(drag.original.x+dx,0,COLS-r.w);r.y=clamp(drag.original.y+dy,0,ROWS-r.h);}const el=drag.el;el.style.left=(100*r.x/COLS)+'%';el.style.top=(100*r.y/ROWS)+'%';el.style.width=(100*r.w/COLS)+'%';el.style.height=(100*r.h/ROWS)+'%';el.classList.toggle('conflict',findCollision(r,getFloor().rooms));});
+function pointerEnd(e){
+  if(painting&&e.pointerId===painting.pointer){const p=painting;painting=null;if(e.type==='pointercancel'){({data,gradeId,buildingId,floorId,stage,selectedId}=p.before);renderAll();return}if(p.changed){historyPush(p.before);renderBoard();toast(mapTool==='corridor-add'?'복도를 그렸어요':'복도를 지웠어요')}return}
+ if(!drag||e.pointerId!==drag.pointer)return;
+ const d=drag,r=getFloor().rooms.find(x=>x.id===d.id);
+ const changed=r&&['x','y','w','h'].some(k=>r[k]!==d.original[k]);
+ let pair=null;
+ if(changed&&findCollision(r,getFloor().rooms)){
+  Object.assign(r,d.original);toast('다른 공간과 겹치거나 건물 경계를 벗어났어요. 이전 배치로 되돌렸어요.');swapTap=null;
+ }else if(changed){
+  eraseCorridorUnder(r,getFloor());historyPush(d.before);toast(d.mode==='resize'?'공간 크기를 변경했어요':'공간 위치를 변경했어요');swapTap=null;
+ }else if(e.type==='pointerup'&&d.mode==='move'&&!d.moved&&stage==='edit'){
+  const now=Date.now(),prior=swapTap;
+  if(prior&&prior.targetId===d.id&&prior.sourceId!==d.id&&prior.gradeId===gradeId&&prior.buildingId===buildingId&&prior.floorId===floorId&&now-prior.when<=650&&Math.hypot(e.clientX-prior.x,e.clientY-prior.y)<32){
+   pair={a:prior.sourceId,b:d.id};swapTap=null;
+  }else{
+   swapTap=d.fromSelectedId&&d.fromSelectedId!==d.id?{sourceId:d.fromSelectedId,targetId:d.id,gradeId,buildingId,floorId,when:now,x:e.clientX,y:e.clientY}:null;
+  }
+ }else{swapTap=null;}
+ drag=null;
+ if(pair&&swapRoomContents(pair.a,pair.b))return;
+ renderBoard();renderInspector();save();
+}
+board.addEventListener('pointerup',pointerEnd);board.addEventListener('pointercancel',pointerEnd);board.addEventListener('lostpointercapture',()=>{if(painting){const p=painting;painting=null;if(p.changed){historyPush(p.before);renderBoard()}}if(drag){swapTap=null;const r=getFloor().rooms.find(x=>x.id===drag.id);if(r)Object.assign(r,drag.original);drag=null;renderBoard();renderInspector();}});
+function mutate(fn){const before=snapshot();const ok=fn();if(ok===false)return;historyPush(before);renderAll()}
+$('inspector').addEventListener('change',e=>{if(!getRoom())return;const el=e.target;let key=null;if(el.id==='fieldName')key='name';if(el.id==='fieldCat')key='category';if(el.id==='fieldAccess')key='access';if(el.id==='fieldPurpose')key='purpose';if(key){const v=el.value.trim();if(key==='name'&&!v){toast('공간 이름을 입력해 주세요');renderInspector();return}if(v===getRoom()[key])return;mutate(()=>{getRoom()[key]=v});return}if(el.dataset.geom){const k=el.dataset.geom;const v=snap(Number(el.value));if(!Number.isFinite(v)||v===(getRoom()[k]))return;const r=getRoom(),newR={...r,[k]:v};if(newR.w<1||newR.h<1||findCollision(newR,getFloor().rooms)){toast('다른 방과 겹치거나 건물 범위를 벗어났어요');renderInspector();return}mutate(()=>{getRoom()[k]=v});return}if(el.id==='moveTo'){const [bid,fid]=el.value.split('::');if(!bid||!fid||(bid===buildingId&&fid===floorId))return;const target=getGrade().buildings.find(x=>x.id===bid)?.floors.find(f=>f.id===fid);if(!target)return;const r=deep(getRoom());let space=findSpace(target,r.w,r.h);const needsReflow=!space;mutate(()=>{getFloor().rooms=getFloor().rooms.filter(x=>x.id!==r.id);if(space)Object.assign(r,space);target.rooms.push(r);if(needsReflow)layout(target.rooms);buildingId=bid;floorId=fid;selectedId=r.id});toast(needsReflow?'공간을 이동하고 대상 층을 자동 정렬했어요 (실행 취소 가능)':'선택 공간을 다른 층으로 이동했어요')}});
+$('inspector').addEventListener('click',e=>{if(e.target.id==='delRoom')removeRoom()});
+function findSpace(f,w=3,h=3){const sample={id:'_temp',x:0,y:0,w,h};for(const [ys,ye] of [[1,7],[9,ROWS],[0,ROWS]]){for(let y=ys;y+h<=ye;y+=.5)for(let x=0;x+w<=18;x+=.5){sample.x=x;sample.y=y;if(!findCollision(sample,f.rooms))return {x,y}}}return null;}
+function nextId(){let ids=data.flatMap(g=>g.buildings.flatMap(b=>b.floors.flatMap(f=>f.rooms.map(r=>Number(r.id.slice(1))||0))));return 'r'+(Math.max(0,...ids)+1)}
+function addRoom(copy=null){const f=getFloor();const w=copy?.w||3,h=copy?.h||3;const p=findSpace(f,w,h);if(!p){toast('빈 자리가 없어요. 기존 공간을 축소하거나 정렬해 주세요.');return}mutate(()=>{const r=copy?{...deep(copy),id:nextId(),name:copy.name+' 복사',...p}:{id:nextId(),name:'새 공간',category:'support',access:'O',purpose:'이 장소의 용도를 입력하세요.',w,h,...p};f.rooms.push(r);eraseCorridorUnder(r,f);selectedId=r.id});toast('공간을 추가했어요. 우측에서 이름과 용도를 바꾸세요.')}
+function removeRoom(){const r=getRoom();if(!r||!confirm(`「${r.name}」 공간을 삭제할까요?\n실행 취소로 복구할 수 있습니다.`))return;mutate(()=>{getFloor().rooms=getFloor().rooms.filter(x=>x.id!==r.id);selectedId=defaultRoom(getFloor())});toast('공간을 삭제했어요')}
+$('addRoomBtn').onclick=()=>addRoom();$('duplicateBtn').onclick=()=>getRoom()?addRoom(getRoom()):toast('복제할 공간을 먼저 선택해 주세요');
+$('autoBtn').onclick=()=>{if(!confirm('현재 층의 공간을 자동으로 다시 정렬할까요?\n직접 바꾼 배치는 실행 취소로 복구할 수 있어요.'))return;mutate(()=>layout(getFloor().rooms));toast('현재 층을 자동 정렬했어요')};
+$('resetFloorBtn').onclick=()=>{const def=defaults.find(g=>g.id===gradeId).buildings.find(b=>b.id===buildingId).floors.find(f=>f.id===floorId);if(!confirm('현재 층의 이름·공간·위치·출입 권한을 모두 기본값으로 돌릴까요?\n실행 취소로 복구할 수 있습니다.'))return;mutate(()=>{let rooms=deep(def.rooms);getFloor().rooms=rooms;getFloor().corridor=defaultCorridor();selectedId=rooms[0]?.id||null});toast('현재 층을 처음 상태로 복원했어요')};
+$('undoBtn').onclick=()=>historyAction(undo,redo);$('redoBtn').onclick=()=>historyAction(redo,undo);
+window.addEventListener('keydown',e=>{const inp=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();historyAction(e.shiftKey?redo:undo,e.shiftKey?undo:redo)}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();historyAction(redo,undo)}else if(e.key==='Escape'){chosenTemplate=null;mapTool='select';renderLibrary();updateTools()}else if((e.key==='Delete'||e.key==='Backspace')&&!inp){e.preventDefault();removeRoom()}});
+function download(name,blob){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+const filenameBase=()=>`offstage_grade${gradeId}_${buildingId}_${floorId}`;
+$('exportBtn').onclick=()=>{const exported={schema:'offstage-agency-floor-editor/v1',note:'실제 사옥 평면도가 아닌 게임용 설계',grid:{columns:COLS,rows:ROWS},grades:data};download('OFFSTAGE_all_agencies.json',new Blob([JSON.stringify(exported,null,2)],{type:'application/json'}));toast('모든 소속사·건물·층을 JSON으로 저장했어요')};
+$('floorJsonBtn').onclick=()=>{download(filenameBase()+'.json',new Blob([JSON.stringify({schema:'offstage-floor/v1',gradeId,buildingId,floor:deep(getFloor()),grid:{columns:COLS,rows:ROWS}},null,2)],{type:'application/json'}));toast('현재 층 JSON을 저장했어요')};
+$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const obj=JSON.parse(await file.text());const incoming=obj.grades||obj.data;if(!validate(incoming))throw Error('전체 사옥 JSON 파일이 아닙니다');if(!confirm('현재 편집 내용을 가져온 JSON 파일로 교체할까요?\n실행 취소로 이전 상태를 복구할 수 있습니다.'))return;mutate(()=>{data=deep(incoming);gradeId=3;buildingId='A';floorId='3F';selectedId=null});toast('전체 사옥 데이터를 불러왔어요')}catch(err){toast('파일 오류: '+err.message)}finally{e.target.value=''}};
+if($('restoreLegacyBtn')){$('restoreLegacyBtn').onclick=()=>{let saved=null;for(const key of ['offstage.agency.floor.editor.v4','offstage.agency.floor.editor.v3','offstage.agency.floor.editor.v2']){try{const prev=JSON.parse(localStorage.getItem(key));if(validate(prev?.data)){saved=prev;break}}catch(e){}}if(!saved){toast('이 브라우저에는 이전 편집 데이터가 없어요. JSON 백업이 있다면 불러오기를 사용하세요.');return}if(!confirm('이전 버전의 전체 사옥 편집 데이터를 복원할까요?\n이 경우 이전 장소명도 함께 복원됩니다.\n현재 v5 배치는 실행 취소로 다시 복구할 수 있습니다.'))return;const before=snapshot();data=deep(saved.data);gradeId=saved.gradeId||3;buildingId=saved.buildingId||'A';floorId=saved.floorId||'3F';selectedId=null;historyPush(before);renderAll();save();toast('이전 편집 데이터를 불러왔어요')};}
+function svgData(){const f=getFloor(),W=1200,H=840;let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="1200" height="840" fill="#f7f6fc"/><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#dad8e8" stroke-width="1"/></pattern></defs><rect width="1200" height="840" fill="url(#grid)"/><rect x="1085" y="70" width="95" height="250" fill="#e0dbeb" stroke="#b3acc2" stroke-width="3"/><text x="1098" y="185" font-size="14" fill="#7e738d">ELEV.</text>`;for(const key of corridorSet(f)){const [cx,cy]=key.split(',').map(Number);if(!f.rooms.some(r=>roomCovers(r,cx,cy)))svg+=`<rect x="${cx*60}" y="${cy*60}" width="60" height="60" fill="#e3e1ec" stroke="#d4d0e0" stroke-width="1"/>`};f.rooms.forEach((r,i)=>{const [fill,edge]=PALETTE[r.category],x=r.x*60,y=r.y*60,w=r.w*60,h=r.h*60;svg+=`<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9" fill="${fill}" stroke="${edge}" stroke-width="5"/><text x="${x+14}" y="${y+30}" fill="#777088" font-size="15" font-family="sans-serif">ROOM ${i+1} / ${r.access}</text><text x="${x+14}" y="${y+67}" fill="#3b364a" font-size="23" font-weight="bold" font-family="sans-serif">${esc(r.name)}</text>`;if(stage!=='edit'&&!accessible(r))svg+=`<rect x="${x+5}" y="${y+5}" width="${w-10}" height="${h-10}" fill="#50475f" fill-opacity=".65"/><text x="${x+14}" y="${y+110}" font-family="sans-serif" font-size="20" font-weight="bold" fill="white">LOCKED · ${r.access}</text>`;svg+='</g>'});svg+='</svg>';return svg}
+$('pngBtn').onclick=()=>{const xml=svgData(),url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml;charset=utf-8'})),img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=1800;c.height=1260;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,c.width,c.height);c.toBlob(blob=>{if(blob)download(filenameBase()+'.png',blob);else toast('PNG 생성에 실패했어요')},'image/png');URL.revokeObjectURL(url)};img.onerror=()=>{URL.revokeObjectURL(url);toast('PNG 출력에 실패했어요')};img.src=url};
+load();locateFirst();renderAll();save();
+</script>
+</body></html>
