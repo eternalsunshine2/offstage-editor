@@ -45,7 +45,7 @@
 @media(max-width:850px){.left{max-height:none;overflow:visible}.left .floors{max-height:none}.left .left-sections{display:grid;grid-template-columns:1fr;gap:12px}.catalogList{max-height:195px;min-height:100px}.catalogItem small{max-width:calc(100vw - 130px)}.shell{display:flex;flex-direction:column}}
 </style></head><body>
 <div class="app">
-  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn primary" id="cleanAllEmptyBtn">전체 빈 층 삭제·층수 정렬</button><button class="topBtn" id="renumberLargeBtn">대형 층 번호 정렬</button><button class="topBtn primary" id="analyzeLargeBtn">현재 대형 배치 분석·초대형 재구성</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
+  <header class="topbar"><div class="mark"><div class="mark-symbol">✳</div><div><div class="wordmark">OFF<span>STAGE</span> <span style="font-weight:400;color:#aaa2b5">×</span> FINAL<span>STAGE</span></div><div class="kicker brand-sub">ENTERTAINMENT BUILDING / SPATIAL EDITOR</div></div></div><div class="topActions"><button class="topBtn" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행 취소</button><button class="topBtn" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시 실행</button><button class="topBtn" id="applyFitnessBtn">대형 이상 피트니스 상층 적용</button><button class="topBtn" id="addMegaRoofBtn">초대형 A·B·C동 RF 추가</button><button class="topBtn primary" id="cleanAllEmptyBtn">전체 빈 층 삭제·층수 정렬</button><button class="topBtn" id="renumberLargeBtn">대형 층 번호 정렬</button><button class="topBtn primary" id="analyzeLargeBtn">현재 대형 배치 분석·초대형 재구성</button><button class="topBtn" id="applyEducationBtn">대형 강의·상담 상층 적용</button><button class="topBtn" id="applyOfficeBtn">대형 사무실 상층 적용</button><button class="topBtn" id="applyBasementBtn">대형 지하 1층 적용</button><button class="topBtn" id="applyMediumBtn">중견 7층 통합 적용</button><button class="topBtn" id="importBtn">↑ 불러오기</button><button class="topBtn" id="restoreLegacyBtn" title="이전 버전에서 편집한 전체 사옥 배치로 복구">↺ 이전 편집 복원</button><button class="topBtn primary" id="exportBtn">↓ 전체 JSON 저장</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></header>
   <div class="shell">
     <aside class="left"><div class="left-sections">
       <section><div class="side-heading">01 / 소속사 등급</div><div class="grade-list" id="gradeList"></div></section>
@@ -70,7 +70,7 @@
 </div><div class="toast" role="status" id="toast"></div>
 <script>
 'use strict';
-const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v21';
+const COLS=20, ROWS=14, STORAGE='offstage.agency.floor.editor.v22';
 const PALETTE={training:['#e6e1f9','#b7a4ef','연습'],production:['#dceef2','#96c6d6','제작'],evaluation:['#f9e2e5','#dfadb9','평가'],support:['#e7f0de','#b4d1a2','지원'],social:['#f9edda','#e0c398','교류'],artist:['#f1e1f6','#cfacd9','아티스트'],management:['#ebebf1','#c5c3d4','경영']};
 const gradeLabels=['','소형','중소형','중견','대형','초대형'];
 function spec(f,title,items){return {id:f,title,rooms:items.split(';').filter(Boolean).map(t=>{const [name,category='support',access='O',purpose='']=t.split('|');return {name,category,access,purpose,interactive:!['주차장','설비실'].includes(name)};})}}
@@ -117,6 +117,7 @@ function defData(){return [
   spec('B1','주차 · 물류 · 설비','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 재고 관리;장비 보관실|management|X|사옥 장비·소모품 보관;설비실|management|X|방문 불가 배경 공간 · 전기·공조 설비')]}]},
  {id:5,label:'초대형',description:'본사 + 고층 트레이닝동 + 전문 제작동',buildings:[
  {id:'A',name:'본사 HQ',floors:[
+ spec('RF','루프탑 라운지','루프탑 라운지|social|O|실내외 휴식과 교류 공간'),
  spec('12F','최고경영진','대표실|management|X|복수 레이블 및 회사 전체 경영;회의실|management|X|사업 승인과 의사결정'),
  spec('11F','경영 지원','경영기획팀 사무실|management|X|재무·인사·조직 운영;법무팀 사무실|management|X|계약과 권리 검토;재무팀 사무실|management|X|사업 회계'),
  spec('10F','국제사업 · 홍보','해외사업팀 사무실|management|X|글로벌 일정과 파트너 계약;홍보팀 사무실|management|X|보도 대응과 브랜드 홍보;마케팅팀 사무실|management|X|컴백·채널별 프로모션'),
@@ -132,6 +133,7 @@ function defData(){return [
  spec('B1','시설 관리','설비실|management|X|방문 불가 배경 공간 · 냉난방·전력 설비;장비 보관실|management|X|본사 공용 장비 보관'),
  spec('B2','주차 · 물류','주차장|management|X|방문 불가 배경 공간 · 차량 주차;물류실|management|X|물품 반입·반출 및 보관·재고 관리')]},
  {id:'B',name:'고층 트레이닝 센터',floors:[
+ spec('RF','루프탑 라운지','루프탑 라운지|social|O|실내외 휴식과 교류 공간'),
  spec('8F','아티스트 전용 연습','아티스트 퍼포먼스실|artist|F|데뷔 아티스트 무대 리허설 및 퍼포먼스 점검;아티스트 보컬실|artist|F|콘서트·컴백 보컬 연습;아티스트 안무실|artist|F|데뷔 아티스트 전용 단체 안무 연습'),
  spec('7F','고층 피트니스 · 회복','피트니스 센터|training|O|트레이닝 센터 내 상층부 체력 단련;컨디셔닝룸|support|O|스트레칭·자세 교정·운동 후 회복;락커룸|support|O|운동 전후 환복;샤워실|support|O|운동 후 샤워'),
  spec('6F','안무 · 퍼포먼스 트레이닝','대형 안무실|training|O|정규 퍼포먼스·그룹 안무 수업;대형 안무실|training|O|팀별 연습과 데뷔조 합동훈련;소형 안무실|training|O|소규모 그룹의 보조 안무 연습;퍼포먼스 스튜디오|evaluation|O|합동 리허설 및 공식 실기 평가'),
@@ -142,6 +144,7 @@ function defData(){return [
  spec('1F','센터 출입','로비|support|O|시설 입장·수업 안내;공용 라운지|social|O|대기와 휴식'),
  spec('B1','장비 관리 · 설비','장비 보관실|management|X|안무·음향 장비와 소모품 보관;설비실|management|X|방문 불가 배경 공간 · 트레이닝 센터 설비')]},
  {id:'C',name:'전문 제작 센터',floors:[
+ spec('RF','루프탑 라운지','루프탑 라운지|social|O|실내외 휴식과 교류 공간'),
  spec('6F','안무 트레이닝','아티스트 프로듀싱룸|artist|F|데뷔 아티스트 전용 작곡·편곡·믹싱·마스터링;아티스트 미팅룸|artist|F|발매 프로젝트 및 편곡 조율'),
  spec('5F','음원 프로듀싱 · 후반 제작','아티스트 프로듀싱룸|artist|F|데뷔 아티스트의 편곡·믹싱·마스터링 등 음원 후반 작업;프로듀싱룸|management|X|전문 엔지니어의 음원 후반 작업'),
  spec('4F','앨범 녹음','앨범 녹음실|production|F|정식 발매곡 보컬·악기 녹음 및 컨트롤룸 통합'),
@@ -190,7 +193,7 @@ function legacyGrade2IsUntouched(g){
 function fixDuplicateIds(){const seen=new Set();let next=1;data.forEach(g=>g.buildings.forEach(b=>b.floors.forEach(f=>f.rooms.forEach(r=>{if(seen.has(r.id)){while(seen.has('r'+next))next++;r.id='r'+next++}seen.add(r.id)}))));}
 function load(){
  // 기존 v5 자동 저장을 처음 열었을 때 가져옵니다. v5 원본은 덮어쓰지 않습니다.
- for(const key of [STORAGE,'offstage.agency.floor.editor.v20','offstage.agency.floor.editor.v19','offstage.agency.floor.editor.v18','offstage.agency.floor.editor.v17','offstage.agency.floor.editor.v16','offstage.agency.floor.editor.v15','offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
+ for(const key of [STORAGE,'offstage.agency.floor.editor.v21','offstage.agency.floor.editor.v20','offstage.agency.floor.editor.v19','offstage.agency.floor.editor.v18','offstage.agency.floor.editor.v17','offstage.agency.floor.editor.v16','offstage.agency.floor.editor.v15','offstage.agency.floor.editor.v14','offstage.agency.floor.editor.v13','offstage.agency.floor.editor.v12','offstage.agency.floor.editor.v11','offstage.agency.floor.editor.v10','offstage.agency.floor.editor.v9','offstage.agency.floor.editor.v8','offstage.agency.floor.editor.v7','offstage.agency.floor.editor.v6','offstage.agency.floor.editor.v5']){
   try{const raw=localStorage.getItem(key);if(!raw)continue;const obj=JSON.parse(raw);if(!validate(obj?.data))continue;
    data=obj.data;gradeId=obj.gradeId||3;buildingId=obj.buildingId||'A';floorId=obj.floorId||'3F';stage=['edit','apprentice','offstage','finalstage','staff'].includes(obj.stage)?obj.stage:'edit';selectedId=obj.selectedId;return;
   }catch(e){}
@@ -615,6 +618,19 @@ function compactFloorNumbers(building){
  const order=id=>id==='RF'?10000:/^\d+F$/.test(id)?Number(id.slice(0,-1)):/^B\d+$/.test(id)?-Number(id.slice(1)):-1000;
  floors.sort((a,b)=>order(b.id)-order(a.id));
 }
+$('addMegaRoofBtn').onclick=()=>{
+ const mega=data.find(g=>g.id===5);if(!mega)return;
+ let added=0;
+ mutate(()=>{
+  for(const b of mega.buildings){
+   if(b.floors.some(f=>f.id==='RF'))continue;
+   const rf=deep(defaults.find(g=>g.id===5)?.buildings.find(x=>x.id===b.id)?.floors.find(f=>f.id==='RF')||{id:'RF',title:'루프탑 라운지',rooms:[],corridor:[]});
+   b.floors.unshift(rf);added++;
+  }
+  fixDuplicateIds();
+ });
+ toast(added?added+'개 동에 RF층을 추가했어요':'세 동 모두 RF층이 이미 있어요');
+};
 $('cleanAllEmptyBtn').onclick=()=>{
  const all=data.flatMap(g=>g.buildings.map(b=>({g,b})));
  const empty=all.flatMap(({g,b})=>b.floors.filter(f=>!f.rooms?.some(r=>r.name?.trim()&&r.name.trim()!=='미배정')).map(f=>g.label+' / '+b.name+' / '+f.id));
